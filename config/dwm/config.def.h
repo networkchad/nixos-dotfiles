@@ -1,4 +1,5 @@
 /* See LICENSE file for copyright and license details. */
+#include <X11/XF86keysym.h>
 
 /* appearance */
 static const unsigned int borderpx  = 1;        /* border pixel of windows */
@@ -63,6 +64,11 @@ static const char *flameshotcmd[] = { "flameshot", "gui", NULL};
 static const char *slockcmd[]  = { "slock", NULL };
 static const char *firefoxcmd[] = { "firefox", "--private-window", NULL};
 static const char *bravecmd[] = { "brave", "--incognito", NULL};
+static const char *mutecmd[] = { "amixer", "-q", "set", "Master", "toggle", NULL }; 
+static const char *volupcmd[] = { "amixer", "-q", "set", "Master", "5%+", "unmute", NULL };
+static const char *voldowncmd[] = { "amixer", "-q", "set", "Master", "5%-", "unmute", NULL };
+static const char *brightupcmd[] = { "brightnessctl", "set", "10%+", NULL };
+static const char *brightdowncmd[] = { "brightnessctl", "set", "10%-", NULL };
 static const char *termcmd[]  = { "st", NULL };
 
 static const Key keys[] = {
@@ -102,6 +108,11 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 
 	/* custom config */
+	{ 0,                            XF86AudioMicMute,    spawn,          {.v = mutecmd } },
+	{ 0,                            XF86AudioLowerVolume,    spawn,          {.v = voldowncmd } },
+	{ 0,                            XF86AudioRaiseVolume,    spawn,          {.v = volupcmd } },
+	{ MODKEY,                       XK_F7,     spawn,          {.v = brightdowncmd } },
+	{ MODKEY,                       XK_F8,     spawn,          {.v = brightupcmd } },
 	{ MODKEY,                       XK_f,      spawn,          {.v = firefoxcmd } },
 	{ MODKEY,                       XK_v,      spawn,          {.v = bravecmd } },
 	{ 0,                            XK_F6,     spawn,          {.v = flameshotcmd } },
