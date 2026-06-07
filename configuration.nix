@@ -113,7 +113,7 @@
       '';
 
       displayManager.sessionCommands = ''
-        feh --bg-fill $HOME/Pictures/bg/bg.png &
+        feh --bg-fill $HOME/nixos-dotfiles/wallpaper/wallpaper.png &
         fcitx5 -d &
         dwmblocks &
       '';
@@ -124,6 +124,13 @@
           src = ./config/dwm;
         });
       };
+    };
+
+    xautolock = {
+      enable = true;
+      time = 5;
+      locker = "/run/wrappers/bin/slock";
+      extraOptions = [ "-corners" "0-00" ];
     };
 
     openssh = {
