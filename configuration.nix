@@ -39,6 +39,16 @@
     LC_TIME = "zh_TW.UTF-8";
   };
 
+  i18n.inputMethod = {
+    enable = true;
+    type = "fcitx5";
+    fcitx5.addons = with pkgs; [
+      fcitx5-mozc
+      fcitx5-chewing
+    ];
+  };
+
+
   users.users."anon" = {
     isNormalUser = true;
     description = "anon";
