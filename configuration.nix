@@ -40,13 +40,16 @@
   };
 
   i18n.inputMethod = {
-    enable = true;
-    type = "fcitx5";
-    fcitx5.addons = with pkgs; [
-      fcitx5-mozc
-      fcitx5-chewing
-    ];
-  };
+      enable = true;
+      type = "fcitx5";
+      fcitx5 = {
+        waylandFrontend = false;
+        addons = with pkgs; [
+          fcitx5-mozc
+          fcitx5-chewing
+        ];
+      };
+    };
 
 
   users.users."anon" = {
@@ -65,6 +68,12 @@
      git
      alsa-utils
   ];
+
+  environment.sessionVariables = {
+      XMODIFIERS = "@im=fcitx";
+      GTK_IM_MODULE = "fcitx";
+      QT_IM_MODULE = "fcitx";
+    };
 
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
@@ -103,6 +112,7 @@
 
       displayManager.sessionCommands = ''
         feh --bg-fill $HOME/Pictures/bg/bg.png &
+        fcitx5 -d &
         dwmblocks &
       '';
 
