@@ -16,6 +16,7 @@
     xclip
     fastfetch
     keepassxc
+    btop
     (st.overrideAttrs (oldAttrs: {
       src = ./config/st;
     }))
