@@ -5,7 +5,7 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-static char *font = "Liberation Mono:pixelsize=16:antialias=true:autohint=true";
+static char *font = "Liberation Mono:pixelsize=12:antialias=true:autohint=true";
 static int borderpx = 2;
 
 /*
@@ -94,7 +94,7 @@ char *termname = "st-256color";
 unsigned int tabspaces = 8;
 
 /* bg opacity */
-float alpha = 0.2;
+float alpha = 0.7;
 
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
@@ -103,7 +103,7 @@ static const char *colorname[] = {
 	"red3",
 	"green3",
 	"yellow3",
-	"pink2",
+	"blue2",
 	"magenta3",
 	"cyan3",
 	"gray90",
@@ -179,8 +179,8 @@ static uint forcemousemod = ShiftMask;
  */
 static MouseShortcut mshortcuts[] = {
 	/* mask                 button   function        argument       release */
-	{ ControlMask,            Button4, kscrollup,      {.i = 1} },
-	{ ControlMask,            Button5, kscrolldown,    {.i = 1} },
+	{ ShiftMask,            Button4, kscrollup,      {.i = 1} },
+	{ ShiftMask,            Button5, kscrolldown,    {.i = 1} },
 	{ XK_ANY_MOD,           Button2, selpaste,       {.i = 0},      1 },
 	{ ShiftMask,            Button4, ttysend,        {.s = "\033[5;2~"} },
 	{ XK_ANY_MOD,           Button4, ttysend,        {.s = "\031"} },
