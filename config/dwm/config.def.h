@@ -62,6 +62,7 @@ static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont,
 static const char *flameshotcmd[] = { "flameshot", "gui", NULL};
 static const char *slockcmd[]  = { "slock", NULL };
 static const char *firefoxcmd[] = { "firefox", "--private-window", NULL};
+static const char *bravecmd[] = { "brave", "--incognito", NULL};
 static const char *termcmd[]  = { "st", NULL };
 
 static const Key keys[] = {
@@ -102,6 +103,7 @@ static const Key keys[] = {
 
 	/* custom config */
 	{ MODKEY,                       XK_f,      spawn,          {.v = firefoxcmd } },
+	{ MODKEY,                       XK_b,      spawn,          {.v = bravecmd } },
 	{ 0,                            XK_F6,     spawn,          {.v = flameshotcmd } },
 	{ 0,                            XK_F11,     spawn,          {.v = slockcmd } },
 

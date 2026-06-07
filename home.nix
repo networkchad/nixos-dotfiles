@@ -17,6 +17,7 @@
     fastfetch
     keepassxc
     btop
+    brave
     (st.overrideAttrs (oldAttrs: {
       src = ./config/st;
     }))
