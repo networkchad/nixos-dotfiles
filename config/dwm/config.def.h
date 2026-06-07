@@ -108,15 +108,15 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 
 	/* custom config */
-	{ 0,                            XF86AudioMicMute,    spawn,          {.v = mutecmd } },
-	{ 0,                            XF86AudioLowerVolume,    spawn,          {.v = voldowncmd } },
-	{ 0,                            XF86AudioRaiseVolume,    spawn,          {.v = volupcmd } },
-	{ MODKEY,                       XK_F7,     spawn,          {.v = brightdowncmd } },
-	{ MODKEY,                       XK_F8,     spawn,          {.v = brightupcmd } },
-	{ MODKEY,                       XK_f,      spawn,          {.v = firefoxcmd } },
-	{ MODKEY,                       XK_v,      spawn,          {.v = bravecmd } },
-	{ 0,                            XK_F6,     spawn,          {.v = flameshotcmd } },
-	{ 0,                            XK_F11,     spawn,          {.v = slockcmd } },
+	{ 0,                            XF86XK_AudioMicMute,       spawn,          {.v = mutecmd } },
+	{ 0,                            XF86XK_AudioLowerVolume,   spawn,          {.v = voldowncmd } },
+	{ 0,                            XF86XK_AudioRaiseVolume,   spawn,          {.v = volupcmd } },
+	{ MODKEY,                       XK_F7,                     spawn,          {.v = brightdowncmd } },
+	{ MODKEY,                       XK_F8,                     spawn,          {.v = brightupcmd } },
+	{ MODKEY,                       XK_f,                      spawn,          {.v = firefoxcmd } },
+	{ MODKEY,                       XK_v,                      spawn,          {.v = bravecmd } },
+	{ 0,                            XK_F6,                     spawn,          {.v = flameshotcmd } },
+	{ 0,                            XK_F11,                    spawn,          {.v = slockcmd } },
 
 };
 
