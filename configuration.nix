@@ -133,11 +133,11 @@
         };
 
       displayManager.sessionCommands = ''
-        feh --bg-fill $HOME/nixos-dotfiles/wallpaper/wallpaper.png &
         fcitx5 -d &
         dwmblocks &
-        sleep 1
+        sleep 0.25
         xrandr --output eDP-1 --auto --primary --output HDMI-1-0 --mode 2560x1440 --rate 144 --right-of eDP-1
+        feh --bg-fill $HOME/nixos-dotfiles/wallpaper/wallpaper.png &
         xautolock -time 5 -locker /run/wrappers/bin/slock -corners 0-00 &
       '';
 
