@@ -87,7 +87,7 @@
       extraConfig = ''
         Section "Monitor"
           Identifier "Virtual-1"
-          Option "PreferredMode" "2560x1440"
+          Option "PreferredMode" "1920x1080"
         EndSection
       '';
 
