@@ -19,6 +19,7 @@
     btop
     brave
     uv
+    arandr
     (st.overrideAttrs (oldAttrs: {
       src = ./config/st;
     }))

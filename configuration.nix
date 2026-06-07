@@ -2,25 +2,48 @@
 
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [
       ./hardware-configuration.nix
     ];
 
   # Bootloader.
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/vda";
-  boot.loader.grub.useOSProber = true;
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "nixos"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  networking.hostName = "nixos";
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Enable networking
   networking.networkmanager.enable = true;
 
+  # nvidia
+  hardware.graphics = {
+    enable = true;
+  };
+  
+  services.xserver.videoDrivers = ["nvidia"];
+
+  hardware.nvidia = {
+    modesetting.enable = true;
+  
+    powerManagement.enable = true;
+    powerManagement.finegrained = true;
+  
+    open = true;
+  
+    nvidiaSettings = true;
+    
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
+  
+    prime = {
+      offload = {
+        enable = true;
+        enableOffloadCmd = true;
+      };
+  
+      intelBusId = "PCI:0:2:0";
+      nvidiaBusId = "PCI:1:0:0";
+    };
+  };
+  
   # Set your time zone.
   time.timeZone = "Asia/Taipei";
 
@@ -28,15 +51,15 @@
   i18n.defaultLocale = "en_US.UTF-8";
 
   i18n.extraLocaleSettings = {
-    LC_ADDRESS = "zh_TW.UTF-8";
-    LC_IDENTIFICATION = "zh_TW.UTF-8";
-    LC_MEASUREMENT = "zh_TW.UTF-8";
-    LC_MONETARY = "zh_TW.UTF-8";
-    LC_NAME = "zh_TW.UTF-8";
-    LC_NUMERIC = "zh_TW.UTF-8";
-    LC_PAPER = "zh_TW.UTF-8";
-    LC_TELEPHONE = "zh_TW.UTF-8";
-    LC_TIME = "zh_TW.UTF-8";
+    LC_ADDRESS = "en_US.UTF-8";
+    LC_IDENTIFICATION = "en_US.UTF-8";
+    LC_MEASUREMENT = "en_US.UTF-8";
+    LC_MONETARY = "en_US.UTF-8";
+    LC_NAME = "en_US.UTF-8";
+    LC_NUMERIC = "en_US.UTF-8";
+    LC_PAPER = "en_US.UTF-8";
+    LC_TELEPHONE = "en_US.UTF-8";
+    LC_TIME = "en_US.UTF-8";
   };
 
   i18n.inputMethod = {
@@ -62,13 +85,13 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  # List packages installed in system profile.
   environment.systemPackages = with pkgs; [
      vim
      wget
      git
      alsa-utils
      docker-compose
+     lshw
      xautolock
   ];
 
@@ -109,17 +132,12 @@
           variant = "";
         };
 
-      extraConfig = ''
-        Section "Monitor"
-          Identifier "Virtual-1"
-          Option "PreferredMode" "1920x1080"
-        EndSection
-      '';
-
       displayManager.sessionCommands = ''
         feh --bg-fill $HOME/nixos-dotfiles/wallpaper/wallpaper.png &
         fcitx5 -d &
         dwmblocks &
+        sleep 1
+        xrandr --output eDP-1 --auto --primary --output HDMI-1-0 --mode 2560x1440 --rate 144 --right-of eDP-1
         xautolock -time 5 -locker /run/wrappers/bin/slock -corners 0-00 &
       '';
 
@@ -130,19 +148,10 @@
         });
       };
     };
-
-    openssh = {
-      enable = true;
-      settings = {
-        PermitRootLogin = "no";
-        PasswordAuthentication = true;
-      };
-    };
-
   };
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 22 ];
+  #networking.firewall.allowedTCPPorts = [ 22 ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
