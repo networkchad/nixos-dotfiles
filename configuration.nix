@@ -133,7 +133,7 @@
         };
 
       displayManager.sessionCommands = ''
-        feh --bg-scale $HOME/nixos-dotfiles/wallpaper/wallpaper.jpg &
+        feh --bg-scale $HOME/nixos-dotfiles/wallpaper/wallpaper.png &
         fcitx5 -d &
         dwmblocks &
         sleep 1
