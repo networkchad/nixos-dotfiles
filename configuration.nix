@@ -51,11 +51,12 @@
       };
     };
 
+  virtualisation.docker.enable = true;
 
   users.users."anon" = {
     isNormalUser = true;
     description = "anon";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "docker"];
     packages = with pkgs; [];
   };
 
@@ -67,6 +68,7 @@
      wget
      git
      alsa-utils
+     docker-compose
   ];
 
   environment.sessionVariables = {
