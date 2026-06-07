@@ -69,6 +69,7 @@
      git
      alsa-utils
      docker-compose
+     xautolock
   ];
 
   environment.sessionVariables = {
@@ -116,6 +117,7 @@
         feh --bg-fill $HOME/nixos-dotfiles/wallpaper/wallpaper.png &
         fcitx5 -d &
         dwmblocks &
+        xautolock -time 5 -locker /run/wrappers/bin/slock -corners 0-00 &
       '';
 
       windowManager.dwm = {
@@ -124,13 +126,6 @@
           src = ./config/dwm;
         });
       };
-    };
-
-    xautolock = {
-      enable = true;
-      time = 5;
-      locker = "/run/wrappers/bin/slock";
-      extraOptions = [ "-corners" "0-00" ];
     };
 
     openssh = {
