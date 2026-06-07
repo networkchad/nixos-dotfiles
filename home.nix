@@ -18,6 +18,7 @@
     keepassxc
     btop
     brave
+    uv
     (st.overrideAttrs (oldAttrs: {
       src = ./config/st;
     }))

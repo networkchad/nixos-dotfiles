@@ -89,6 +89,9 @@
         src = ./config/slock;
       }));
     };
+    nix-ld = {
+      enable = true;
+    };
   };
 
   services = {
