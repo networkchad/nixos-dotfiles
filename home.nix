@@ -5,9 +5,10 @@
   home.homeDirectory = "/home/anon";
   home.stateVersion = "26.05";
 
+  services.picom.enable = true;
+
   home.packages = with pkgs; [
     dmenu
-    firefox
     ani-cli
     pavucontrol
     brightnessctl
@@ -17,7 +18,6 @@
     xclip
     fastfetch
     keepassxc
-    btop
     brave
     uv
     arandr
@@ -33,12 +33,25 @@
     }))
   ];
 
-  programs.vim = {
-    enable = true;
-    extraConfig = ''
-      syntax on
-      set number
-    '';
+  programs = {
+    home-manager.enable = true;
+    firefox.enable = true;
+    btop.enable = true;
+
+    vim = {
+      enable = true;
+      extraConfig = ''
+        syntax on
+        set number
+      '';
+    };
+
+    bash = {
+      enable = true;
+      shellAliases = {
+        xclip = "xclip -selection clipboard -i";
+      };
+    };
   };
 
   xsession.enable = true;
@@ -50,12 +63,4 @@
     feh --bg-fill $HOME/nixos-dotfiles/pics/wallpaper.png &
     xautolock -time 5 -locker /run/wrappers/bin/slock -corners 0-00 &
   '';
-
-  programs.bash = {
-    enable = true;
-    shellAliases = {
-      xclip = "xclip -selection clipboard -i";
-    };
-  };
-
 }
