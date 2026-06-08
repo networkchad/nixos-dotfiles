@@ -20,7 +20,7 @@
     nftables.enable = true;
     firewall = {
       enable = true;
-      trustedInterfaces = [ config.services.tailscale.interfaceName ];
+      trustedInterfaces = [ config.services.tailscale.interfaceName "virbr0"];
       allowedUDPPorts = [ config.services.tailscale.port ];
     };
   };
