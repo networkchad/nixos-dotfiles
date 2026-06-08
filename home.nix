@@ -24,6 +24,7 @@
     alsa-utils
     lshw
     xautolock
+    ledger-live-desktop
     (st.overrideAttrs (oldAttrs: {
       src = ./config/st;
     }))
