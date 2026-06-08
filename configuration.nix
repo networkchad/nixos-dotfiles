@@ -75,6 +75,8 @@
     };
 
   virtualisation.docker.enable = true;
+  virtualisation.libvirtd.enable = true;
+  systemd.tmpfiles.rules = [ "L+ /var/lib/qemu/firmware - - - - ${pkgs.qemu}/share/qemu/firmware" ];
 
   users.users."anon" = {
     isNormalUser = true;
@@ -89,10 +91,9 @@
      vim
      wget
      git
-     alsa-utils
+     qemu
      docker-compose
-     lshw
-     xautolock
+     dnsmasq
   ];
 
   environment.sessionVariables = {
@@ -115,6 +116,9 @@
     nix-ld = {
       enable = true;
     };
+    virt-manager = {
+      enable = true;
+    };
   };
 
   services = {
@@ -132,15 +136,6 @@
           variant = "";
         };
 
-      displayManager.sessionCommands = ''
-        fcitx5 -d &
-        dwmblocks &
-        sleep 0.25
-        xrandr --output eDP-1 --auto --primary --output HDMI-1-0 --mode 2560x1440 --rate 144 --right-of eDP-1
-        feh --bg-fill $HOME/nixos-dotfiles/wallpaper/wallpaper.png &
-        xautolock -time 5 -locker /run/wrappers/bin/slock -corners 0-00 &
-      '';
-
       windowManager.dwm = {
         enable = true;
         package = pkgs.dwm.overrideAttrs (oldAttrs: {
@@ -151,7 +146,7 @@
   };
 
   # Open ports in the firewall.
-  #networking.firewall.allowedTCPPorts = [ 22 ];
+  # networking.firewall.allowedTCPPorts = [ 22 ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
