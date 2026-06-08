@@ -11,10 +11,18 @@
     efi.canTouchEfiVariables = true;
   };
 
-  # --- Networking ---
+  # --- Networking & Firewall ---
   networking = {
     hostName = "nixbox";
     networkmanager.enable = true;
+    
+    # Modern nftables backend with Tailscale permissions
+    nftables.enable = true;
+    firewall = {
+      enable = true;
+      trustedInterfaces = [ config.services.tailscale.interfaceName ];
+      allowedUDPPorts = [ config.services.tailscale.port ];
+    };
   };
 
   # --- Hardware & Drivers ---
@@ -79,6 +87,11 @@
     "L+ /var/lib/qemu/firmware - - - - ${pkgs.qemu}/share/qemu/firmware"
   ];
 
+  # --- Systemd Service Overrides ---
+  systemd.services.tailscaled.serviceConfig.Environment = [ 
+    "TS_DEBUG_FIREWALL_MODE=nftables" 
+  ];
+
   # --- User Accounts ---
   users.users."anon" = {
     isNormalUser = true;
@@ -124,6 +137,7 @@
 
   # --- System Services ---
   services = {
+    tailscale.enable = true;
     displayManager.ly.enable = true;
 
     xserver = {
