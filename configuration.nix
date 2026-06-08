@@ -96,7 +96,7 @@
   users.users."anon" = {
     isNormalUser = true;
     description = "anon";
-    extraGroups = [ "networkmanager" "wheel" "docker" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" "libvirtd"];
     packages = with pkgs; [ ];
   };
 
