@@ -105,9 +105,9 @@ static const Key keys[] = {
 	/* custom config */
 	{ MODKEY,                       XK_f,                      spawn,          {.v = firefoxcmd } },
 	{ MODKEY,                       XK_v,                      spawn,          {.v = bravecmd } },
-	{ ControlMask,                  XK_f,                      spawn,          {.v = flameshotcmd } },
-	{ ControlMask,                  XK_m,                      spawn,          {.v = mutecmd } },
-	{ ControlMask,                  XK_l,                      spawn,          {.v = slockcmd } },
+	{ Mod4Mask,                  XK_f,                      spawn,          {.v = flameshotcmd } },
+	{ Mod4Mask,                  XK_m,                      spawn,          {.v = mutecmd } },
+	{ Mod4Mask,                  XK_l,                      spawn,          {.v = slockcmd } },
 
 };
 
