@@ -26,10 +26,10 @@
     xautolock
     ledger-live-desktop
     (st.overrideAttrs (oldAttrs: {
-      src = ../pkgs/suckless/st;
+      src = ../../pkgs/suckless/st;
     }))
     (dwmblocks.overrideAttrs (oldAttrs: {
-      src = ../pkgs/suckless/dwmblocks;
+      src = ../../pkgs/suckless/dwmblocks;
     }))
   ];
 

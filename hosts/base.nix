@@ -38,7 +38,7 @@
     slock = {
       enable = true;
       package = pkgs.slock.overrideAttrs (oldAttrs: {
-        src = ../../config/slock;
+        src = ../../pkgs/suckless/slock;
       });
     };
   };
@@ -53,7 +53,7 @@
       windowManager.dwm = {
         enable = true;
         package = pkgs.dwm.overrideAttrs (oldAttrs: {
-          src = ../../config/dwm;
+          src = ../../pkgs/suckless/dwm;
         });
       };
     };

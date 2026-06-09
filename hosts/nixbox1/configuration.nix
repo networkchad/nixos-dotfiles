@@ -3,7 +3,7 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ../../modules/core/base.nix
+    ../base.nix
     ../../modules/utils/nvidia.nix
     ../../modules/utils/qemu.nix
     ../../modules/utils/tailscale.nix
