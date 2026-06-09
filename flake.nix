@@ -10,32 +10,38 @@
   outputs = { self, nixpkgs, home-manager, ... }:
     let
       system = "x86_64-linux";
-      
-      sharedHomeManager = [
-        home-manager.nixosModules.home-manager
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.users.anon = import ./hosts/home.nix;
-          home-manager.backupFileExtension = "backup";
-        }
-      ];
     in {
       nixosConfigurations = {
         
-        base = nixpkgs.lib.nixosSystem {
-          inherit system;
-          modules = [
-            ./modules/core/base.nix
-          ] ++ sharedHomeManager;
-        };
-
         nixbox1 = nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
             ./hosts/nixbox1/configuration.nix
-          ] ++ sharedHomeManager;
+            
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.backupFileExtension = "backup";
+              home-manager.users.anon = import ./hosts/nixbox1/home.nix;
+            }
+          ];
         };
+
+        # Example of how you would add a second host with a completely different user profile later:
+        # nixbox2 = nixpkgs.lib.nixosSystem {
+        #   inherit system;
+        #   modules = [
+        #     ./hosts/nixbox2/configuration.nix
+        #     home-manager.nixosModules.home-manager
+        #     {
+        #       home-manager.useGlobalPkgs = true;
+        #       home-manager.useUserPackages = true;
+        #       home-manager.backupFileExtension = "backup";
+        #       home-manager.users.differentuser = import ./hosts/nixbox2/differentuser.nix;
+        #     }
+        #   ];
+        # };
 
       };
     };
