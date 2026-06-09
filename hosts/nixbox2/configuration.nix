@@ -8,7 +8,7 @@
     ../../modules/utils/tailscale.nix
   ];
 
-  networking.hostName = "nixbox1";
+  networking.hostName = "nixbox2";
 
   # --- Docker Configuration ---
   virtualisation.docker.enable = true;
