@@ -24,7 +24,7 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.backupFileExtension = "backup";
-              home-manager.users.anon = import ./hosts/nixbox1/home.nix;
+              home-manager.users.anon = import ./hosts/nixbox1/anon.nix;
             }
           ];
         };
@@ -39,7 +39,7 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.backupFileExtension = "backup";
-              home-manager.users.anon = import ./hosts/nixbox2/home.nix;
+              home-manager.users.anon = import ./hosts/nixbox2/anon.nix;
             }
           ];
         };
