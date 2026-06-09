@@ -11,7 +11,6 @@
     dmenu
     ani-cli
     pavucontrol
-    brightnessctl
     mpv
     feh
     flameshot
