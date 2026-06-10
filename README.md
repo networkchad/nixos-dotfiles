@@ -14,21 +14,28 @@
 ├── flake.nix                  # Flake entrypoint (defines hosts & inputs)
 ├── hosts/                     # Machine-specific configurations
 │   ├── nixbox1/               # Host 1
-│   │   ├── anon.nix           # Home Manager config for user 'anon'
 │   │   ├── configuration.nix  # System config
-│   │   └── hardware-configuration.nix
+│   │   ├── hardware-configuration.nix
+│   │   └── home/              # Home Manager configs for this host
+│   │       └── anon.nix       # User environment
 │   └── nixbox2/               # Host 2
-│       ├── anon.nix
 │       ├── configuration.nix
-│       └── hardware-configuration.nix
+│       ├── hardware-configuration.nix
+│       └── home/
+│           └── anon.nix
 ├── modules/                   # Shared configs & custom packages
-│   ├── pkgs/                  # Custom patched suckless builds
-│   │   ├── dwm/               # Window Manager
-│   │   ├── dwmblocks/         # Status Bar & Scripts
+│   ├── pkgs/                  # Custom patched suckless source builds
+│   │   ├── dwm/               # Window Manager (patched with uselessgaps)
+│   │   ├── dwmblocks/         # Status Bar (with modular scripts)
 │   │   ├── slock/             # Screen Locker
-│   │   └── st/                # Terminal Emulator
-│   └── utils/                 # Extensible profiles (Tailscale, Nvidia, QEMU)
-└── pics/                      # Wallpapers & assets
+│   │   └── st/                # Terminal Emulator (patched with alpha, scrollback)
+│   └── utils/                 # Extensible system profiles
+│       ├── docker.nix
+│       ├── nvidia.nix
+│       ├── nvidia-pre-turing.nix
+│       ├── qemu.nix
+│       └── tailscale.nix
+└── pics/                      # Wallpapers & pictures
 ```
 
 ---
