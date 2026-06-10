@@ -2,8 +2,6 @@
 
 *"I use Nix btw"*
 
-A modular NixOS configuration utilizing **Flakes** and **Home Manager** to deploy custom desktop environments across multiple machines.
-
 ![System Showcase](pics/demo.png)
 
 ---
@@ -17,7 +15,7 @@ A modular NixOS configuration utilizing **Flakes** and **Home Manager** to deplo
 ├── hosts/                     # Machine-specific configurations
 │   ├── nixbox1/               # Host 1
 │   │   ├── anon.nix           # Home Manager config for user 'anon'
-│   │   ├── configuration.nix  # System config (Nvidia, Docker, QEMU, etc.)
+│   │   ├── configuration.nix  # System config
 │   │   └── hardware-configuration.nix
 │   └── nixbox2/               # Host 2
 │       ├── anon.nix
@@ -43,7 +41,7 @@ A modular NixOS configuration utilizing **Flakes** and **Home Manager** to deplo
 - **Bar:** dwmblocks (custom scripts mapped to `$HOME/.config/dwmblocks/scripts`)
 - **Display Manager:** ly
 - **Compositor:** picom
-- **Input Method:** fcitx5 (Mozc / Chewing for JP/TW layouts)
+- **Input Method:** fcitx5
 
 ---
 
@@ -116,15 +114,6 @@ This will fetch the latest versions of channels, nixpkgs, and other inputs defin
 ```bash
 sudo nixos-rebuild switch --flake .#your-hostname
 ```
-
-3. **Update Home Manager for user packages**:
-
-```bash
-home-manager switch --flake .#your-hostname
-```
-
-This ensures both system and user packages are updated to the latest versions defined by your flake inputs.
-
 ---
 
 ## Maintenance & Cleanup
