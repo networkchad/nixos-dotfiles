@@ -23,7 +23,6 @@
   };
 
   # --- User Accounts ---
-  # Merged normal settings and group permissions for "anon" here
   users.users."anon" = {
     isNormalUser = true;
     description = "anon";
