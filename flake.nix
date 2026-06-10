@@ -29,7 +29,7 @@
             home-manager.backupFileExtension = "backup";
             
             home-manager.users = lib.genAttrs users (user: 
-              import ./hosts/${hostName}/${user}.nix
+              import ./hosts/${hostName}/home/${user}.nix
             );
           }
         ];

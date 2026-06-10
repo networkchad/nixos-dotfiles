@@ -6,11 +6,11 @@
   home.stateVersion = "26.05";
 
   xdg.configFile."dwmblocks/scripts" = {
-    source = ../../modules/pkgs/dwmblocks/scripts;
+    source = ../../../modules/pkgs/dwmblocks/scripts;
     recursive = true;
   };
   
-  xdg.configFile."wallpapers/wallpaper1.png".source = ../../pics/wallpaper1.png;
+  xdg.configFile."wallpapers/wallpaper1.png".source = ../../../pics/wallpaper1.png;
 
   services.picom.enable = true;
 
@@ -31,10 +31,10 @@
     xautolock
     ledger-live-desktop
     (st.overrideAttrs (oldAttrs: {
-      src = ../../modules/pkgs/st;
+      src = ../../../modules/pkgs/st;
     }))
     (dwmblocks.overrideAttrs (oldAttrs: {
-      src = ../../modules/pkgs/dwmblocks;
+      src = ../../../modules/pkgs/dwmblocks;
     }))
   ];
 
