@@ -68,19 +68,19 @@ The `flake.nix` uses a dynamic helper (`builtins.mapAttrs`) to automatically reg
 1. Duplicate an existing host directory:
 
 ```bash
-cp -r hosts/nixbox1 hosts/your-new-hostname
+cp -r hosts/nixbox1 hosts/your-hostname
 ```
 
 2. Update hardware details in:
 
 ```text
-hosts/your-new-hostname/hardware-configuration.nix
+hosts/your-hostname/hardware-configuration.nix
 ```
 
 3. Change the hostname inside `configuration.nix`:
 
 ```nix
-networking.hostName = "your-new-hostname";
+networking.hostName = "your-hostname";
 ```
 
 4. Register the host in `flake.nix`:
