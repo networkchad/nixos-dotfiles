@@ -3,18 +3,83 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ../base.nix
     ../../modules/utils/nvidia.nix
+    ../../modules/utils/docker.nix
     ../../modules/utils/qemu.nix
     ../../modules/utils/tailscale.nix
   ];
 
   networking.hostName = "nixbox1";
 
-  # --- Docker Configuration ---
-  virtualisation.docker.enable = true;
-  environment.systemPackages = with pkgs; [ docker-compose ];
-  users.users.anon.extraGroups = [ "docker" ];
+  # --- Bootloader ---
+  boot.loader = {
+    systemd-boot.enable = true;
+    efi.canTouchEfiVariables = true;
+  };
+
+  # --- Networking ---
+  networking = {
+    networkmanager.enable = true;
+    firewall.enable = true;
+  };
+
+  # --- User Accounts ---
+  # Merged normal settings and group permissions for "anon" here
+  users.users."anon" = {
+    isNormalUser = true;
+    description = "anon";
+    extraGroups = [ "networkmanager" "wheel" "docker" "libvirtd" ];
+  };
+
+  # --- System Packages & Environment ---
+  nixpkgs.config.allowUnfree = true;
+
+  environment = {
+    systemPackages = with pkgs; [
+      wget
+      git
+    ];
+    sessionVariables = {
+      XMODIFIERS = "@im=fcitx";
+      GTK_IM_MODULE = "fcitx";
+      QT_IM_MODULE = "fcitx";
+    };
+  };
+
+  fonts.packages = with pkgs; [
+    nerd-fonts.jetbrains-mono
+  ];
+
+  # --- Programs ---
+  programs = {
+    nix-ld.enable = true;
+    slock = {
+      enable = true;
+      package = pkgs.slock.overrideAttrs (oldAttrs: {
+        src = ../../modules/pkgs/slock;
+      });
+    };
+  };
+
+  # --- System Services ---
+  services = {
+    displayManager.ly.enable = true;
+    xserver = {
+      enable = true;
+      autoRepeatDelay = 200;
+      autoRepeatInterval = 35;
+      xkb = {
+        layout = "jp";
+        variant = "";
+      };
+      windowManager.dwm = {
+        enable = true;
+        package = pkgs.dwm.overrideAttrs (oldAttrs: {
+          src = ../../modules/pkgs/dwm;
+        });
+      };
+    };
+  };
 
   # --- Time Zone & Localization ---
   time.timeZone = "Asia/Taipei";
@@ -47,15 +112,11 @@
     };
   };
 
-  # --- Keyboard Layout & Environment Variables ---
-  services.xserver.xkb = {
-    layout = "jp";
-    variant = "";
+  # --- Nix Daemon Settings ---
+  nix.settings = {
+    experimental-features = [ "nix-command" "flakes" ];
+    auto-optimise-store = true;
   };
 
-  environment.sessionVariables = {
-    XMODIFIERS = "@im=fcitx";
-    GTK_IM_MODULE = "fcitx";
-    QT_IM_MODULE = "fcitx";
-  };
+  system.stateVersion = "26.05";
 }

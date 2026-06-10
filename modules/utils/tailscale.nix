@@ -3,16 +3,12 @@
 {
   services.tailscale.enable = true;
 
-  networking = {
-    nftables.enable = true;
-    firewall = {
-      enable = true;
-      trustedInterfaces = [ config.services.tailscale.interfaceName "virbr0" ];
-      allowedUDPPorts = [ config.services.tailscale.port ];
-    };
+  networking.firewall = {
+    trustedInterfaces = [ config.services.tailscale.interfaceName "virbr0" ];
+    allowedUDPPorts = [ config.services.tailscale.port ];
   };
 
-  systemd.services.tailscaled.serviceConfig.Environment = [ 
-    "TS_DEBUG_FIREWALL_MODE=nftables" 
+  systemd.services.tailscaled.serviceConfig.Environment = [
+    "TS_DEBUG_FIREWALL_MODE=nftables"
   ];
 }

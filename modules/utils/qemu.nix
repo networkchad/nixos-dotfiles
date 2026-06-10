@@ -9,8 +9,6 @@
     dnsmasq
   ];
 
-  users.users.anon.extraGroups = [ "libvirtd" ];
-
   systemd.tmpfiles.rules = [
     "L+ /var/lib/qemu/firmware - - - - ${pkgs.qemu}/share/qemu/firmware"
   ];

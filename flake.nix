@@ -1,5 +1,5 @@
 {
-  description = "Modularized Multi-Profile NixOS Configuration";
+  description = "i use Nix btw";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
@@ -10,40 +10,32 @@
   outputs = { self, nixpkgs, home-manager, ... }:
     let
       system = "x86_64-linux";
-    in {
-      nixosConfigurations = {
+      lib = nixpkgs.lib;
 
-        #nixbox1
-        nixbox1 = nixpkgs.lib.nixosSystem {
-          inherit system;
-          modules = [
-            ./hosts/nixbox1/configuration.nix
-            
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.backupFileExtension = "backup";
-              home-manager.users.anon = import ./hosts/nixbox1/anon.nix;
-            }
-          ];
-        };
-
-        #nixbox2
-        nixbox2 = nixpkgs.lib.nixosSystem {
-          inherit system;
-          modules = [
-            ./hosts/nixbox2/configuration.nix
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.backupFileExtension = "backup";
-              home-manager.users.anon = import ./hosts/nixbox2/anon.nix;
-            }
-          ];
-        };
-
+      hosts = {
+        nixbox1 = { users = [ "anon"]; }; 
+        nixbox2 = { users = [ "anon"]; };
       };
+
+      mkSystem = hostName: { users }: lib.nixosSystem {
+        inherit system;
+        modules = [
+          ./hosts/${hostName}/configuration.nix
+          
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "backup";
+            
+            home-manager.users = lib.genAttrs users (user: 
+              import ./hosts/${hostName}/${user}.nix
+            );
+          }
+        ];
+      };
+
+    in {
+      nixosConfigurations = builtins.mapAttrs mkSystem hosts;
     };
 }

@@ -5,6 +5,13 @@
   home.homeDirectory = "/home/anon";
   home.stateVersion = "26.05";
 
+  xdg.configFile."dwmblocks/scripts" = {
+    source = ../../modules/pkgs/dwmblocks/scripts;
+    recursive = true;
+  };
+  
+  xdg.configFile."pics/wallpaper.png".source = ../../pics/wallpaper.png;
+
   services.picom.enable = true;
 
   home.packages = with pkgs; [
@@ -25,10 +32,10 @@
     xautolock
     ledger-live-desktop
     (st.overrideAttrs (oldAttrs: {
-      src = ../../modules/pkgs/suckless/st;
+      src = ../../modules/pkgs/st;
     }))
     (dwmblocks.overrideAttrs (oldAttrs: {
-      src = ../../modules/pkgs/suckless/dwmblocks;
+      src = ../../modules/pkgs/dwmblocks;
     }))
   ];
 
@@ -58,7 +65,7 @@
     fcitx5 -d &
     dwmblocks &
     xrandr --output eDP-1 --auto --primary --output HDMI-1-0 --mode 2560x1440 --rate 144 --right-of eDP-1
-    feh --bg-fill $HOME/nixos-dotfiles/pics/wallpaper.png &
+    feh --bg-fill $HOME/.config/pics/wallpaper.png &
     xautolock -time 5 -locker /run/wrappers/bin/slock -corners 0-00 &
   '';
 }
