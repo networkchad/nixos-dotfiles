@@ -36,9 +36,9 @@
 ## Core Stack
 
 - **OS:** NixOS
-- **Window Manager:** dwm (patched locally via `modules/pkgs/dwm`)
-- **Terminal:** st (patched locally via `modules/pkgs/st`)
-- **Bar:** dwmblocks (custom scripts mapped to `$HOME/.config/dwmblocks/scripts`)
+- **Window Manager:** dwm
+- **Terminal:** st
+- **Bar:** dwmblocks
 - **Display Manager:** ly
 - **Compositor:** picom
 - **Input Method:** fcitx5
@@ -60,8 +60,6 @@ sudo nixos-rebuild switch --flake .#nixbox2
 ```
 
 ### Add a New Host
-
-The `flake.nix` uses a dynamic helper (`builtins.mapAttrs`) to automatically register configurations.
 
 1. Duplicate an existing host directory:
 
