@@ -73,7 +73,7 @@ cp -r hosts/nixbox1 hosts/your-hostname
 hosts/your-hostname/hardware-configuration.nix
 ```
 
-3. Change the hostname inside `configuration.nix`:
+3. Edit `configuration.nix` for your machine's config (e.g. bootloader, system pakcages, users etc):
 
 ```nix
 networking.hostName = "your-hostname";
