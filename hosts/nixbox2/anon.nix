@@ -10,7 +10,7 @@
     recursive = true;
   };
   
-  xdg.configFile."pics/wallpaper.png".source = ../../pics/wallpaper.png;
+  xdg.configFile."wallpapers/wallpaper1.png".source = ../../pics/wallpaper1.png;
 
   services.picom.enable = true;
 
@@ -64,7 +64,7 @@
   xsession.initExtra = ''
     fcitx5 -d &
     dwmblocks &
-    feh --bg-fill $HOME/.config/pics/wallpaper.png &
+    feh --bg-fill $HOME/.config/wallpapers/wallpaper1.png &
     xautolock -time 5 -locker /run/wrappers/bin/slock -corners 0-00 &
   '';
 }
