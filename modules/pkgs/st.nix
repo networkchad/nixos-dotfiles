@@ -3,7 +3,7 @@
 {
   home.packages = [
     (pkgs.st.overrideAttrs (oldAttrs: {
-      src = ../../../src/st;
+      src = ../../src/st;
     }))
   ];
 }
