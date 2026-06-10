@@ -6,6 +6,10 @@
     ../../modules/utils/nvidia-pre-turing.nix
     ../../modules/utils/docker.nix
     ../../modules/utils/tailscale.nix
+    ../../modules/utils/i18n.nix
+    
+    ../../modules/pkgs/dwm.nix
+    ../../modules/pkgs/slock.nix
   ];
 
   networking.hostName = "nixbox2";
@@ -26,7 +30,7 @@
   users.users."anon" = {
     isNormalUser = true;
     description = "anon";
-    extraGroups = [ "networkmanager" "wheel" "docker"];
+    extraGroups = [ "networkmanager" "wheel" "docker" ];
   };
 
   # --- System Packages & Environment ---
@@ -37,27 +41,10 @@
       wget
       git
     ];
-    sessionVariables = {
-      XMODIFIERS = "@im=fcitx";
-      GTK_IM_MODULE = "fcitx";
-      QT_IM_MODULE = "fcitx";
-    };
   };
-
-  fonts.packages = with pkgs; [
-    nerd-fonts.jetbrains-mono
-  ];
 
   # --- Programs ---
-  programs = {
-    nix-ld.enable = true;
-    slock = {
-      enable = true;
-      package = pkgs.slock.overrideAttrs (oldAttrs: {
-        src = ../../modules/pkgs/slock;
-      });
-    };
-  };
+  programs.nix-ld.enable = true;
 
   # --- System Services ---
   services = {
@@ -70,43 +57,6 @@
         layout = "us";
         variant = "";
       };
-      windowManager.dwm = {
-        enable = true;
-        package = pkgs.dwm.overrideAttrs (oldAttrs: {
-          src = ../../modules/pkgs/dwm;
-        });
-      };
-    };
-  };
-
-  # --- Time Zone & Localization ---
-  time.timeZone = "Asia/Taipei";
-
-  i18n = {
-    defaultLocale = "en_US.UTF-8";
-    extraLocaleSettings = {
-      LC_ADDRESS = "en_US.UTF-8";
-      LC_IDENTIFICATION = "en_US.UTF-8";
-      LC_MEASUREMENT = "en_US.UTF-8";
-      LC_MONETARY = "en_US.UTF-8";
-      LC_NAME = "en_US.UTF-8";
-      LC_NUMERIC = "en_US.UTF-8";
-      LC_PAPER = "en_US.UTF-8";
-      LC_TELEPHONE = "en_US.UTF-8";
-      LC_TIME = "en_US.UTF-8";
-    };
-    
-    # Language Input Method Engine (IME)
-    inputMethod = {
-      enable = true;
-      type = "fcitx5";
-      fcitx5 = {
-        waylandFrontend = false;
-        addons = with pkgs; [
-          fcitx5-mozc
-          fcitx5-chewing
-        ];
-      };
     };
   };
 
@@ -118,3 +68,4 @@
 
   system.stateVersion = "26.05";
 }
+
