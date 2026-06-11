@@ -3,28 +3,21 @@
 {
   imports = [
     ./hardware-configuration.nix
+
+    ../../modules/utils/bootloader-systemd.nix
+    ../../modules/utils/network.nix
+    ../../modules/utils/ly.nix
     ../../modules/utils/nvidia-pre-turing.nix
     ../../modules/utils/docker.nix
     ../../modules/utils/tailscale.nix
     ../../modules/utils/i18n.nix
-    
+
     ../../modules/pkgs/dwm.nix
     ../../modules/pkgs/slock.nix
   ];
 
+
   networking.hostName = "nixbox2";
-
-  # --- Bootloader ---
-  boot.loader = {
-    systemd-boot.enable = true;
-    efi.canTouchEfiVariables = true;
-  };
-
-  # --- Networking ---
-  networking = {
-    networkmanager.enable = true;
-    firewall.enable = true;
-  };
 
   # --- User Accounts ---
   users.users."anon" = {
@@ -47,16 +40,13 @@
   programs.nix-ld.enable = true;
 
   # --- System Services ---
-  services = {
-    displayManager.ly.enable = true;
-    xserver = {
-      enable = true;
-      autoRepeatDelay = 200;
-      autoRepeatInterval = 35;
-      xkb = {
-        layout = "us";
-        variant = "";
-      };
+  services.xserver = {
+    enable = true;
+    autoRepeatDelay = 200;
+    autoRepeatInterval = 35;
+    xkb = {
+      layout = "us";
+      variant = "";
     };
   };
 
