@@ -16,7 +16,7 @@
     recursive = true;
   };
   
-  xdg.configFile."wallpapers/nix-wallpaper-binary-black.png".source = ../../../pics/nix-wallpaper-binary-black.png;
+  xdg.configFile."wallpapers/2077.png".source = ../../../pics/2077.png;
 
   # --- Services ---
   services.picom.enable = true;
@@ -70,7 +70,7 @@
     fcitx5 -d &
     dwmblocks &
     xrandr --output eDP-1 --auto --primary --output HDMI-1-0 --mode 2560x1440 --rate 144 --right-of eDP-1
-    feh --bg-fill $HOME/.config/wallpapers/nix-wallpaper-binary-black.png &
+    feh --bg-fill $HOME/.config/wallpapers/2077.png &
     xautolock -time 5 -locker /run/wrappers/bin/slock -corners 0-00 &
   '';
 }
