@@ -16,7 +16,7 @@
     recursive = true;
   };
   
-  xdg.configFile."wallpapers/wallpaper1.png".source = ../../../pics/wallpaper1.png;
+  xdg.configFile."wallpapers/nix-wallpaper-binary-black.png".source = ../../../pics/nix-wallpaper-binary-black.png;
 
   # --- Services ---
   services.picom.enable = true;
@@ -40,7 +40,6 @@
     # Desktop Applications / GUI
     dmenu
     brave
-    ledger-live-desktop
   ];
 
   # --- Programs ---
@@ -71,7 +70,7 @@
     fcitx5 -d &
     dwmblocks &
     xrandr --output eDP-1 --auto --primary --output HDMI-1-0 --mode 2560x1440 --rate 144 --right-of eDP-1
-    feh --bg-fill $HOME/.config/wallpapers/wallpaper1.png &
+    feh --bg-fill $HOME/.config/wallpapers/nix-wallpaper-binary-black.png &
     xautolock -time 5 -locker /run/wrappers/bin/slock -corners 0-00 &
   '';
 }

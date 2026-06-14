@@ -16,7 +16,7 @@
     recursive = true;
   };
   
-  xdg.configFile."wallpapers/wallpaper1.png".source = ../../../pics/wallpaper1.png;
+  xdg.configFile."wallpapers/nix-wallpaper-dracula.png".source = ../../../pics/nix-wallpaper-dracula.png;
 
   # --- Services ---
   services.picom.enable = true;
@@ -40,7 +40,6 @@
     # Desktop Applications / GUI
     dmenu
     brave
-    ledger-live-desktop
   ];
 
   # --- Programs ---
@@ -70,7 +69,7 @@
   xsession.initExtra = ''
     fcitx5 -d &
     dwmblocks &
-    feh --bg-fill $HOME/.config/wallpapers/wallpaper1.png &
+    feh --bg-fill $HOME/.config/wallpapers/nix-wallpaper-dracula.png &
     xautolock -time 5 -locker /run/wrappers/bin/slock -corners 0-00 &
   '';
 }
