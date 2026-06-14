@@ -55,6 +55,7 @@
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
     auto-optimise-store = true;
+    trusted-users = [ "root" "anon" ];
   };
 
   system.stateVersion = "26.05";
