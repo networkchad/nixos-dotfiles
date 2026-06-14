@@ -32,10 +32,10 @@
     xclip
     fastfetch
     keepassxc
-    devenv
     arandr
     alsa-utils
     xautolock
+    uv
     
     # Desktop Applications / GUI
     dmenu
