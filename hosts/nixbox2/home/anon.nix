@@ -32,7 +32,7 @@
     xclip
     fastfetch
     keepassxc
-    uv
+    devenv
     arandr
     alsa-utils
     xautolock
