@@ -62,7 +62,7 @@ static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont,
 static const char *flameshotcmd[] = { "flameshot", "gui", NULL};
 static const char *mutecmd[] = { "amixer", "-q", "set", "Master", "toggle", NULL };
 static const char *slockcmd[]  = { "slock", NULL };
-static const char *librewolfmd[] = { "librewolf", "--private-window", NULL};
+static const char *librewolfcmd[] = { "librewolf", "--private-window", NULL};
 static const char *bravecmd[] = { "brave", "--incognito", NULL};
 static const char *termcmd[]  = { "st", NULL };
 
