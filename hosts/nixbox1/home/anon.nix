@@ -40,12 +40,12 @@
     # Desktop Applications / GUI
     dmenu
     brave
+    librewolf
   ];
 
   # --- Programs ---
   programs = {
     home-manager.enable = true;
-    firefox.enable = true;
     btop.enable = true;
 
     vim = {
