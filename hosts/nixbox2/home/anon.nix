@@ -36,6 +36,7 @@
     alsa-utils
     xss-lock
     uv
+    devenv
     
     # Desktop Applications / GUI
     dmenu
