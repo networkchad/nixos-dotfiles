@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# Prints all batteries with their percentage remaining.
-
-# Loop through all attached batteries and format the info
 for battery in /sys/class/power_supply/BAT?*; do
 	[ -n "${capacity+x}" ] && printf " "
 	case "$(cat "$battery/status" 2>&1)" in

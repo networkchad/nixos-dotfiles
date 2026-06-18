@@ -34,7 +34,7 @@
     keepassxc
     arandr
     alsa-utils
-    xautolock
+    xss-lock
     uv
     
     # Desktop Applications / GUI
@@ -70,7 +70,8 @@
     fcitx5 -d &
     dwmblocks &
     feh --bg-fill $HOME/.config/wallpapers/nix-wallpaper-dracula.png &
-    xautolock -time 5 -locker /run/wrappers/bin/slock -corners 0-00 &
+    xset s 300
+    xss-lock -- slock &
   '';
 }
 
