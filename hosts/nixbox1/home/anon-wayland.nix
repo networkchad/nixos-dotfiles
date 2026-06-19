@@ -6,6 +6,8 @@
     ../../../modules/pkgs/foot.nix
     ../../../modules/pkgs/dwl.nix
     ../../../modules/pkgs/fonts.nix
+    ../../../modules/pkgs/fonts.nix
+    ../../../modules/pkgs/swaylock.nix
   ];
 
   home.username = "anon";
@@ -20,11 +22,6 @@
     };
     
     "wallpapers/2077.png".source = ../../../pics/2077.png;
-
-    "dwl/wayland-session" = {
-      source = ../../../src/dwl/scripts/start-dwl.sh;
-      executable = true;
-    };
   };
 
   # --- User Packages ---
@@ -69,11 +66,6 @@
       shellAliases = {
         copy = "wl-copy <";
       };
-      profileExtra = ''
-        if [ -z "$DISPLAY" ] && [ "$XDG_VTNR" -eq 1 ]; then
-          exec dwl -s "$HOME/.config/dwl/wayland-session"
-        fi
-      '';  
     };
   };
 }
