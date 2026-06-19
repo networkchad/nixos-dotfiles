@@ -3,7 +3,7 @@
 {
   imports = [
     ../../../modules/pkgs/st.nix
-    ../../../modules/pkgs/dwmblocks.nix
+    ../../../modules/pkgs/slstatus.nix
   ];
 
   home.username = "anon";
@@ -11,8 +11,8 @@
   home.stateVersion = "26.05";
 
   # --- XDG Configuration Files ---
-  xdg.configFile."dwmblocks/scripts" = {
-    source = ../../../src/dwmblocks/scripts;
+  xdg.configFile."slstatus/scripts" = {
+    source = ../../../src/slstatus/scripts;
     recursive = true;
   };
   
@@ -69,7 +69,7 @@
   xsession.enable = true;
   xsession.initExtra = ''
     fcitx5 -d &
-    dwmblocks &
+    slstatus &
     xrandr --output eDP-1 --auto --primary --output HDMI-1-0 --mode 2560x1440 --rate 144 --right-of eDP-1
     feh --bg-fill $HOME/.config/wallpapers/2077.png &
     xset s 300
