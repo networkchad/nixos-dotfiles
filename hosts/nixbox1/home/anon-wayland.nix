@@ -70,12 +70,11 @@
       shellAliases = {
         copy = "wl-copy <";
       };
-      
-      loginShellInit = ''
+      profileExtra = ''
         if [ -z "$DISPLAY" ] && [ "$XDG_VTNR" -eq 1 ]; then
           exec dwl -s "$HOME/.config/dwl/wayland-session"
         fi
-      '';
+      '';  
     };
   };
 }
