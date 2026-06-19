@@ -50,6 +50,7 @@
     swaylock
     swaybg
     wlr-randr
+    pwvucontrol
   ];
 
   # --- Programs ---
