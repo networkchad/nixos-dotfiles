@@ -20,6 +20,11 @@
     };
     
     "wallpapers/2077.png".source = ../../../pics/2077.png;
+
+    "dwl/wayland-session" = {
+      source = ../../../src/dwl/scripts/start-dwl.sh;
+      executable = true;
+    };
   };
 
   # --- User Packages ---
@@ -60,12 +65,17 @@
       '';
     };
 
-  bash = {
+    bash = {
       enable = true;
       shellAliases = {
-      copy = "wl-copy <";
+        copy = "wl-copy <";
       };
+      
+      loginShellInit = ''
+        if [ -z "$DISPLAY" ] && [ "$XDG_VTNR" -eq 1 ]; then
+          exec dwl -s "$HOME/.config/dwl/wayland-session"
+        fi
+      '';
     };
   };
-
 }
