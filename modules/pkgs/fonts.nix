@@ -2,6 +2,7 @@
 
 {
   home.packages = with pkgs; [
-    nerd-fonts.jetbrains-mono
+    dejavu_fonts
   ];
+  fonts.fontconfig.enable = true;
 }

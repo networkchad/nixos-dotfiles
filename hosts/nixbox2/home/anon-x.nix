@@ -62,7 +62,7 @@
     bash = {
       enable = true;
       shellAliases = {
-        xclip = "xclip -selection clipboard -i";
+        copy = "xclip -selection clipboard -i";
       };
     };
   };

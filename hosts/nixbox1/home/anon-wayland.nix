@@ -62,6 +62,9 @@
 
   bash = {
       enable = true;
+      shellAliases = {
+      copy = "wl-copy <";
+      };
     };
   };
 
