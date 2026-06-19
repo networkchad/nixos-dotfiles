@@ -9,7 +9,7 @@
         dpi-aware = "yes";
       };
       colors-dark = {
-        alpha = "0.7";
+        alpha = "0.5";
       };
     };
   };

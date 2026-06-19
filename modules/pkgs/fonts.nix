@@ -2,7 +2,9 @@
 
 {
   home.packages = with pkgs; [
-    dejavu_fonts
+    noto-fonts
+    noto-fonts-cjk-sans
+    noto-fonts-color-emoji
   ];
   fonts.fontconfig.enable = true;
 }
