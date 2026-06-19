@@ -6,7 +6,7 @@ mute=$(amixer get Master | grep -oP '\[on\]|\[off\]' | head -n1)
 
 # Check if muted, and update the output accordingly
 if [ "$mute" = "[off]" ]; then
-    echo "Vol:/"
+    echo "/"
 else
-    echo "Vol:$volume"
+    echo "$volume"
 fi

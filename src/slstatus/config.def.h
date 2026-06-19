@@ -67,12 +67,12 @@ static const char unknown_str[] = "n/a";
 
 static const struct arg args[] = {
     /* function     format          argument */
-    { kernel_release, "%s",         NULL },
+    { os_release,     "%s",          "sh -c $HOME/.config/slstatus/scripts/os-nixos.sh" },
     { cpu_perc,       " | CPU:%s%%", NULL },
     { ram_perc,       " | RAM:%s%%", NULL },
-    { run_command,    " | VPN:%s",   "sh -c $HOME/.config/slstatus/scripts/vpn.sh" },
-    { run_command,    " | NET:%s",   "sh -c $HOME/.config/slstatus/scripts/internet.sh" },
-    { battery_perc,   " | BAT:%s%%", "BAT0" },
-    { vol_perc,       " | VOL:%s%%", "default" },
-    { datetime,       " | %s",        "%Y-%m-%d %H:%M" },
+    { vpn_status,     " | VPN:%s",   "sh -c $HOME/.config/slstatus/scripts/vpn.sh" },
+    { net_status,     " | Net:%s",   "sh -c $HOME/.config/slstatus/scripts/internet.sh" },
+    { battery_perc,   " | B:%s%%",   "BAT0" },
+    { run_command,    " | Vol:%s",   "sh -c $HOME/.config/slstatus/scripts/volume.sh" },
+    { datetime,       " | %s",       "%Y-%m-%d %H:%M" },
 };

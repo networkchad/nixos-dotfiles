@@ -14,8 +14,8 @@ if [ -n "$vpn_status" ]; then
       vpn_info="${vpn_info}WG"
     fi
   fi
-  echo "VPN:$vpn_info"
+  echo "$vpn_info"
 else
-  echo "VPN:/"
+  echo "/"
 fi
 
