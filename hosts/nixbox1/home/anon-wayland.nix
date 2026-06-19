@@ -47,7 +47,6 @@
     wmenu
     foot
     wl-clipboard
-    swaylock
     swayidle
     swaybg
     wlr-randr
@@ -57,6 +56,7 @@
   programs = {
     home-manager.enable = true;
     btop.enable = true;
+    swaylock.enble = true;
 
     vim = {
       enable = true;
