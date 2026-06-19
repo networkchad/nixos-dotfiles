@@ -11,6 +11,7 @@
     ../../modules/utils/tailscale.nix
     ../../modules/utils/i18n.nix
     ../../modules/utils/x.nix
+    ../../modules/utils/ly.nix
     ../../modules/utils/keyboard-us.nix
 
     ../../modules/pkgs/dwm.nix
