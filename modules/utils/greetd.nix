@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   environment.sessionVariables = {
@@ -16,14 +16,14 @@
     enable = true;
     settings = {
       default_session = {
-        # Use tuigreet to launch dwl directly
-        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd dwl";
+        # Fix #1: Updated pkgs.greetd.tuigreet -> pkgs.tuigreet
+        command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd dwl";
         user = "greeter";
       };
     };
   };
 
   systemd.services.greetd.serviceConfig = {
-    Type = "simple";
+    Type = lib.mkForce "simple";
   };
 }
