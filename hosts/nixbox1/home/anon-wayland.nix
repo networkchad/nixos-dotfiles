@@ -64,9 +64,9 @@
       '';
     };
 
-    bash = {
+  bash = {
       enable = true;
-      loginShellInit = ''
+      profileExtra = ''
         if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
           exec ~/.config/dwl/start-dwl
         fi
