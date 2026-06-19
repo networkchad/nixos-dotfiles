@@ -13,6 +13,7 @@
     ../../modules/utils/x.nix
     ../../modules/utils/ly.nix
     ../../modules/utils/keyboard-us.nix
+    ../../modules/utils/pipewire.nix
 
     ../../modules/pkgs/dwm.nix
     ../../modules/pkgs/slock.nix
