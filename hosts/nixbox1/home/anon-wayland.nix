@@ -7,7 +7,6 @@
     ../../../modules/pkgs/dwl.nix
     ../../../modules/pkgs/fonts.nix
     ../../../modules/pkgs/fonts.nix
-    ../../../modules/pkgs/swaylock.nix
   ];
 
   home.username = "anon";
