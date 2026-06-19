@@ -18,10 +18,10 @@
     #../../modules/utils/x.nix
     #../../modules/pkgs/dwm.nix
     #../../modules/pkgs/slock.nix
+    #../../modules/utils/ly.nix
 
     # wayland
     ../../modules/utils/wayland-addons.nix
-    ../../modules/pkgs/dwl.nix
 
   ];
 

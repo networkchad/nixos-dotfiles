@@ -4,6 +4,7 @@
   imports = [
     ../../../modules/pkgs/slstatus.nix
     ../../../modules/pkgs/foot.nix
+    ../../../modules/pkgs/dwl.nix
   ];
 
   home.username = "anon";
