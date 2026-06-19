@@ -56,7 +56,7 @@
   programs = {
     home-manager.enable = true;
     btop.enable = true;
-    swaylock.enble = true;
+    swaylock.enable = true;
 
     vim = {
       enable = true;
