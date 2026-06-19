@@ -5,6 +5,8 @@
     NIXOS_OZONE_WL = "1"; 
   };
 
+  i18n.inputMethod.fcitx5.waylandFrontend
+
   xdg.portal = {
     enable = true;
     wlr.enable = true;
