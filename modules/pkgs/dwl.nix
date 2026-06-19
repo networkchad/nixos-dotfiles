@@ -23,6 +23,7 @@
         Exec=dwl
         Type=Application
       '';
+      passthru.providedSessions = [ "dwl" ];
     })
   ];
 }
