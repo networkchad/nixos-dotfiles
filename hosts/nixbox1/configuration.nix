@@ -15,13 +15,13 @@
     ../../modules/utils/pipewire.nix
     
     # x & dwm
-    #../../modules/utils/x.nix
-    #../../modules/utils/ly.nix
-    #../../modules/pkgs/dwm.nix
-    #../../modules/pkgs/slock.nix
+    ../../modules/utils/x.nix
+    ../../modules/utils/ly.nix
+    ../../modules/pkgs/dwm.nix
+    ../../modules/pkgs/slock.nix
 
     # wayland
-    ../../modules/utils/wayland-addons.nix
+    #../../modules/utils/wayland-addons.nix
 
   ];
 
