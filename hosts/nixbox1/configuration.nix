@@ -20,7 +20,7 @@
     #../../modules/pkgs/slock.nix
 
     # wayland
-    ../../modules/utils/wayland-settings.nix
+    ../../modules/utils/greetd.nix
 
   ];
 
