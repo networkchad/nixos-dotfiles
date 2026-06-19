@@ -6,7 +6,7 @@
 
     ../../modules/utils/bootloader-systemd.nix
     ../../modules/utils/network.nix
-    ../../modules/utils/ly.nix
+    #../../modules/utils/ly.nix
     ../../modules/utils/nvidia.nix
     ../../modules/utils/docker.nix
     ../../modules/utils/qemu.nix
