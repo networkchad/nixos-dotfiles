@@ -6,7 +6,6 @@
 
     ../../modules/utils/bootloader-systemd.nix
     ../../modules/utils/network.nix
-    ../../modules/utils/ly.nix
     ../../modules/utils/nvidia-pre-turing.nix
     ../../modules/utils/docker.nix
     ../../modules/utils/tailscale.nix
