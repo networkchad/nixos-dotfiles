@@ -6,6 +6,7 @@
     ../../../modules/pkgs/foot.nix
     ../../../modules/pkgs/dwl.nix
     ../../../modules/pkgs/fonts.nix
+    ../../../modules/pkgs/swayidle.nix
   ];
 
   home.username = "anon";
@@ -47,7 +48,6 @@
     wmenu
     foot
     wl-clipboard
-    swayidle
     swaybg
     wlr-randr
   ];
@@ -56,7 +56,6 @@
   programs = {
     home-manager.enable = true;
     btop.enable = true;
-    swaylock.enable = true;
 
     vim = {
       enable = true;
@@ -73,7 +72,7 @@
       };
       profileExtra = ''
         if [ -z "$DISPLAY" ] && [ "$XDG_VTNR" -eq 1 ]; then
-          exec "$HOME/.config/dwl/wayland-session"
+          exec dwl -s "$HOME/.config/dwl/wayland-session"
         fi
       '';  
     };
