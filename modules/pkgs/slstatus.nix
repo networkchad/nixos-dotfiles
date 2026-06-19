@@ -2,7 +2,7 @@
 
 {
   home.packages = [
-    (pkgs.dwmblocks.overrideAttrs (oldAttrs: {
+    (pkgs.slstatus.overrideAttrs (oldAttrs: {
       src = ../../src/slstatus;
     }))
   ];
