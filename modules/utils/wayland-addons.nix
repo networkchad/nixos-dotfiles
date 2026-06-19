@@ -5,7 +5,7 @@
     NIXOS_OZONE_WL = "1"; 
   };
 
-  i18n.inputMethod.fcitx5.waylandFrontend;
+  i18n.inputMethod.fcitx5.waylandFrontend = true;
 
   xdg.portal = {
     enable = true;
