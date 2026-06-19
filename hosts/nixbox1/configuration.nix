@@ -22,6 +22,7 @@
 
     # wayland
     #../../modules/utils/wayland-addons.nix
+    #../../modules/pkgs/swaylock.nix
 
   ];
 

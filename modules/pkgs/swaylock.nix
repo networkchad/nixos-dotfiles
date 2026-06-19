@@ -2,6 +2,7 @@
 
 {
   programs.swaylock.enable = true;
+  security.pam.services.swaylock = {};
 
   services.swayidle = {
     enable = true;
