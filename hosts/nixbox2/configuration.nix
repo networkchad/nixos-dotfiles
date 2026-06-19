@@ -11,6 +11,8 @@
     ../../modules/utils/docker.nix
     ../../modules/utils/tailscale.nix
     ../../modules/utils/i18n.nix
+    ../../modules/utils/display-x.nix
+    ../../modules/utils/keyboard-us.nix
 
     ../../modules/pkgs/dwm.nix
     ../../modules/pkgs/slock.nix
@@ -38,17 +40,6 @@
 
   # --- Programs ---
   programs.nix-ld.enable = true;
-
-  # --- System Services ---
-  services.xserver = {
-    enable = true;
-    autoRepeatDelay = 200;
-    autoRepeatInterval = 35;
-    xkb = {
-      layout = "us";
-      variant = "";
-    };
-  };
 
   # --- Nix Daemon Settings ---
   nix.settings = {
