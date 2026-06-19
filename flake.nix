@@ -15,7 +15,7 @@
       hosts = {
         nixbox1 = { 
           users = [ "anon" ]; 
-          sessionType = "wayland";
+          sessionType = "x";
         }; 
         nixbox2 = { 
           users = [ "anon" ]; 
