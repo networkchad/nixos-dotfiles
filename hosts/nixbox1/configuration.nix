@@ -12,7 +12,7 @@
     ../../modules/utils/qemu.nix
     ../../modules/utils/tailscale.nix
     ../../modules/utils/i18n.nix
-    ../../modules/utils/display-x.nix
+    ../../modules/utils/x.nix
     ../../modules/utils/keyboard-jp.nix
 
     ../../modules/pkgs/dwm.nix

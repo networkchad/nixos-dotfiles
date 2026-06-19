@@ -11,7 +11,7 @@
     ../../modules/utils/docker.nix
     ../../modules/utils/tailscale.nix
     ../../modules/utils/i18n.nix
-    ../../modules/utils/display-x.nix
+    ../../modules/utils/x.nix
     ../../modules/utils/keyboard-us.nix
 
     ../../modules/pkgs/dwm.nix
