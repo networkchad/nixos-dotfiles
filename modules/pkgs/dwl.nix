@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 
 {
-  home.packages = [
+  environment.systemPackages = [
     (pkgs.dwl.overrideAttrs (oldAttrs: {
       src = ../../src/dwl; 
       

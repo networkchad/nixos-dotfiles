@@ -3,7 +3,6 @@
 {
   imports = [
     ../../../modules/pkgs/slstatus.nix
-    ../../../modules/pkgs/dwl.nix
     ../../../modules/pkgs/foot.nix
   ];
 
