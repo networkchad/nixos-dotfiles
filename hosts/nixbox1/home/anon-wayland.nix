@@ -19,11 +19,6 @@
     };
     
     "wallpapers/2077.png".source = ../../../pics/2077.png;
-
-    "dwl/start-dwl.sh" = {
-      source = ../../../src/dwl/scripts/start-dwl.sh;
-      executable = true;
-    };
   };
 
   # --- User Packages ---
