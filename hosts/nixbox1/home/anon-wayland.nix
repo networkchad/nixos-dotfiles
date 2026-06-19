@@ -5,6 +5,7 @@
     ../../../modules/pkgs/slstatus.nix
     ../../../modules/pkgs/foot.nix
     ../../../modules/pkgs/dwl.nix
+    ../../../modules/pkgs/fonts.nix
   ];
 
   home.username = "anon";
