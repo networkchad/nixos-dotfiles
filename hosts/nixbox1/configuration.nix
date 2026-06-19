@@ -6,7 +6,6 @@
 
     ../../modules/utils/bootloader-systemd.nix
     ../../modules/utils/network.nix
-    ../../modules/utils/ly.nix
     ../../modules/utils/nvidia.nix
     ../../modules/utils/docker.nix
     ../../modules/utils/qemu.nix
@@ -15,13 +14,13 @@
     ../../modules/utils/keyboard-jp.nix
     
     # x & dwm
-    ../../modules/utils/x.nix
-    ../../modules/pkgs/dwm.nix
-    ../../modules/pkgs/slock.nix
-    ../../modules/utils/ly.nix
+    #../../modules/utils/x.nix
+    #../../modules/pkgs/dwm.nix
+    #../../modules/pkgs/slock.nix
+    #../../modules/utils/ly.nix
 
     # wayland
-    #../../modules/utils/wayland-addons.nix
+    ../../modules/utils/wayland-addons.nix
 
   ];
 
