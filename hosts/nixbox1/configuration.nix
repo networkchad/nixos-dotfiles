@@ -12,6 +12,7 @@
     ../../modules/utils/tailscale.nix
     ../../modules/utils/i18n.nix
     ../../modules/utils/keyboard-jp.nix
+    ../../modules/utils/pipewire.nix
     
     # x & dwm
     #../../modules/utils/x.nix
