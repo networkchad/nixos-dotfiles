@@ -3,7 +3,6 @@
 {
   imports = [
     ./hardware-configuration.nix
-
     ../../modules/utils/bootloader-systemd.nix
     ../../modules/utils/network.nix
     ../../modules/utils/nvidia.nix
@@ -13,19 +12,17 @@
     ../../modules/utils/i18n.nix
     ../../modules/utils/keyboard-jp.nix
     ../../modules/utils/pipewire.nix
-    
-    # x & dwm
+  ]
+  ++ lib.optionals (sessionType == "x") [
     ../../modules/utils/x.nix
     ../../modules/utils/ly.nix
     ../../modules/pkgs/dwm.nix
     ../../modules/pkgs/slock.nix
-
-    # wayland
-    #../../modules/utils/wayland-addons.nix
-    #../../modules/pkgs/swaylock.nix
-
+  ]
+  ++ lib.optionals (sessionType == "wayland") [
+    ../../modules/utils/wayland-addons.nix
+    ../../modules/pkgs/swaylock.nix
   ];
-
 
   networking.hostName = "nixbox1";
 

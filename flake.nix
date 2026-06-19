@@ -19,12 +19,15 @@
         }; 
         nixbox2 = { 
           users = [ "anon" ]; 
-          sessionType = "x";
+          sessionType = "wayland";
         };
       };
 
       mkSystem = hostName: { users, sessionType }: lib.nixosSystem {
         inherit system;
+        
+        specialArgs = { inherit sessionType; }; 
+
         modules = [
           ./hosts/${hostName}/configuration.nix
           
