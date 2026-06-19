@@ -3,7 +3,7 @@
 {
   imports = [
     ../../../modules/pkgs/st.nix
-    ../../../modules/pkgs/dwmblocks.nix
+    ../../../modules/pkgs/slstatus.nix
   ];
 
   home.username = "anon";
@@ -11,8 +11,8 @@
   home.stateVersion = "26.05";
 
   # --- XDG Configuration Files ---
-  xdg.configFile."dwmblocks/scripts" = {
-    source = ../../../src/dwmblocks/scripts;
+  xdg.configFile."slstatus/scripts" = {
+    source = ../../../src/slstatus/scripts;
     recursive = true;
   };
   
@@ -69,7 +69,7 @@
   xsession.enable = true;
   xsession.initExtra = ''
     fcitx5 -d &
-    dwmblocks &
+    slstatus &
     feh --bg-fill $HOME/.config/wallpapers/nix-wallpaper-dracula.png &
     xset s 300
     xss-lock -- slock &
