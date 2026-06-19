@@ -20,7 +20,7 @@
     
     "wallpapers/2077.png".source = ../../../pics/2077.png;
 
-    "dwl/start-dwl" = {
+    "dwl/start-dwl.sh" = {
       source = ../../../src/dwl/scripts/start-dwl.sh;
       executable = true;
     };
@@ -66,11 +66,6 @@
 
   bash = {
       enable = true;
-      profileExtra = ''
-        if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
-          exec ~/.config/dwl/start-dwl
-        fi
-      '';
     };
   };
 

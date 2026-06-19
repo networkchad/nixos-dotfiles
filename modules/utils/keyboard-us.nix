@@ -5,4 +5,6 @@
     layout = "us";
     variant = "";
   };
+
+  console.useXkbConfig = true;
 }

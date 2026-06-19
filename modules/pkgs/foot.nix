@@ -8,7 +8,7 @@
         font = "monospace:size=11";
         dpi-aware = "yes";
       };
-      colors = {
+      colors-dark = {
         alpha = "0.9";
       };
     };

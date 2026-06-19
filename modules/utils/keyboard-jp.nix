@@ -5,4 +5,6 @@
     layout = "jp";
     variant = "";
   };
+
+  console.useXkbConfig = true;
 }
