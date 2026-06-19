@@ -12,11 +12,16 @@
     ../../modules/utils/qemu.nix
     ../../modules/utils/tailscale.nix
     ../../modules/utils/i18n.nix
-    ../../modules/utils/x.nix
     ../../modules/utils/keyboard-jp.nix
+    
+    # x & dwm
+    #../../modules/utils/x.nix
+    #../../modules/pkgs/dwm.nix
+    #../../modules/pkgs/slock.nix
 
-    ../../modules/pkgs/dwm.nix
-    ../../modules/pkgs/slock.nix
+    # wayland
+    ../../modules/utils/wayland-settings.nix
+
   ];
 
 

@@ -2,8 +2,9 @@
 
 {
   imports = [
-    ../../../modules/pkgs/st.nix
     ../../../modules/pkgs/slstatus.nix
+    ../../../modules/pkgs/dwl.nix
+    ../../../modules/pkgs/foot.nix
   ];
 
   home.username = "anon";
@@ -11,15 +12,19 @@
   home.stateVersion = "26.05";
 
   # --- XDG Configuration Files ---
-  xdg.configFile."slstatus/scripts" = {
-    source = ../../../src/slstatus/scripts;
-    recursive = true;
-  };
-  
-  xdg.configFile."wallpapers/nix-wallpaper-dracula.png".source = ../../../pics/nix-wallpaper-dracula.png;
+  xdg.configFile = {
+    "slstatus/scripts" = {
+      source = ../../../src/slstatus/scripts;
+      recursive = true;
+    };
+    
+    "wallpapers/2077.png".source = ../../../pics/2077.png;
 
-  # --- Services ---
-  services.picom.enable = true;
+    "dwl/start-dwl" = {
+      source = ../../../src/dwl/scripts/start-dwl.sh;
+      executable = true;
+    };
+  };
 
   # --- User Packages ---
   home.packages = with pkgs; [
@@ -27,21 +32,23 @@
     ani-cli
     pavucontrol
     mpv
-    feh
     flameshot
-    xclip
     fastfetch
     keepassxc
-    arandr
     alsa-utils
-    xss-lock
     uv
     devenv
     
     # Desktop Applications / GUI
-    dmenu
     brave
     librewolf
+
+    wmenu
+    foot
+    wl-clipboard
+    swaylock
+    swaybg
+    wlr-randr
   ];
 
   # --- Programs ---
@@ -59,20 +66,12 @@
 
     bash = {
       enable = true;
-      shellAliases = {
-        xclip = "xclip -selection clipboard -i";
-      };
+      loginShellInit = ''
+        if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
+          exec ~/.config/dwl/start-dwl
+        fi
+      '';
     };
   };
 
-  # --- X Session Settings & Startup ---
-  xsession.enable = true;
-  xsession.initExtra = ''
-    fcitx5 -d &
-    slstatus &
-    feh --bg-fill $HOME/.config/wallpapers/nix-wallpaper-dracula.png &
-    xset s 300
-    xss-lock -- slock &
-  '';
 }
-

@@ -13,11 +13,17 @@
       lib = nixpkgs.lib;
 
       hosts = {
-        nixbox1 = { users = [ "anon"]; }; 
-        nixbox2 = { users = [ "anon"]; };
+        nixbox1 = { 
+          users = [ "anon" ]; 
+          sessionType = "wayland";
+        }; 
+        nixbox2 = { 
+          users = [ "anon" ]; 
+          sessionType = "x";
+        };
       };
 
-      mkSystem = hostName: { users }: lib.nixosSystem {
+      mkSystem = hostName: { users, sessionType }: lib.nixosSystem {
         inherit system;
         modules = [
           ./hosts/${hostName}/configuration.nix
@@ -29,7 +35,7 @@
             home-manager.backupFileExtension = "backup";
             
             home-manager.users = lib.genAttrs users (user: 
-              import ./hosts/${hostName}/home/${user}.nix
+              import ./hosts/${hostName}/home/${user}-${sessionType}.nix
             );
           }
         ];

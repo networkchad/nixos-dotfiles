@@ -11,12 +11,14 @@
   home.stateVersion = "26.05";
 
   # --- XDG Configuration Files ---
-  xdg.configFile."slstatus/scripts" = {
-    source = ../../../src/slstatus/scripts;
-    recursive = true;
+  xdg.configFile = {
+    "slstatus/scripts" = {
+      source = ../../../src/slstatus/scripts;
+      recursive = true;
+    };
+
+    "wallpapers/2077.png".source = ../../../pics/2077.png;
   };
-  
-  xdg.configFile."wallpapers/2077.png".source = ../../../pics/2077.png;
 
   # --- Services ---
   services.picom.enable = true;
