@@ -21,7 +21,6 @@
   ]
   ++ lib.optionals (sessionType == "wayland") [
     ../../modules/utils/wayland-addons.nix
-    ../../modules/utils/wayland-pipewire-idle-inhibit.nix
     ../../modules/utils/greetd.nix
     ../../modules/utils/pam.nix
   ];
