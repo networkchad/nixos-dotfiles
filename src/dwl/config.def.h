@@ -30,7 +30,7 @@ static int log_level = WLR_ERROR;
 static const char *const autostart[] = {
         "fcitx5", NULL,
         "swaybg", "-i", "/home/anon/.config/wallpapers/2077.png", "-m", "fill", NULL,
-	"slstatus", NULL,
+	"slstatus", "-s", NULL,
         NULL /* terminate */
 };
 

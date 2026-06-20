@@ -3,22 +3,26 @@
 {
   imports = [
     ./hardware-configuration.nix
-
     ../../modules/utils/bootloader-systemd.nix
     ../../modules/utils/network.nix
     ../../modules/utils/nvidia-pre-turing.nix
     ../../modules/utils/docker.nix
     ../../modules/utils/tailscale.nix
     ../../modules/utils/i18n.nix
-    ../../modules/utils/x.nix
-    ../../modules/utils/ly.nix
     ../../modules/utils/keyboard-us.nix
     ../../modules/utils/pipewire.nix
-
+  ]
+  ++ lib.optionals (sessionType == "x") [
+    ../../modules/utils/x.nix
+    ../../modules/utils/ly.nix
     ../../modules/pkgs/dwm.nix
     ../../modules/pkgs/slock.nix
+  ]
+  ++ lib.optionals (sessionType == "wayland") [
+    ../../modules/utils/wayland-addons.nix
+    ../../modules/utils/greetd.nix
+    ../../modules/pkgs/swaylock.nix
   ];
-
 
   networking.hostName = "nixbox2";
 

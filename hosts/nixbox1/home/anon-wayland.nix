@@ -30,7 +30,6 @@
     ani-cli
     pavucontrol
     mpv
-    flameshot
     fastfetch
     keepassxc
     alsa-utils
@@ -46,6 +45,7 @@
     wl-clipboard
     swaybg
     wlr-randr
+    grim
   ];
 
   # --- Programs ---
