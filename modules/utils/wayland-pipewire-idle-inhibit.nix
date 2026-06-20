@@ -4,17 +4,14 @@
   services.wayland-pipewire-idle-inhibit = {
     enable = true;
 
-    systemdTarget = "graphical-session.target";
+    systemdTarget = "default.target";
 
     settings = {
       verbosity = "INFO";
-
       media_minimum_duration = 10;
-
       idle_inhibitor = "wayland";
 
-      sink_whitelist = [
-      ];
+      sink_whitelist = [ ];
     };
   };
 }
