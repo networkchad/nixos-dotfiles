@@ -143,7 +143,7 @@ static const char *screenshotcmd[] = {
 };
 static const char *swaylockcmd[] = { "swaylock", NULL};
 static const char *mutecmd[] = { "amixer", "-q", "set", "Master", "toggle", NULL };
-static const char *bravecmd[] = { "brave", "--incognito", NULL };
+static const char *bravecmd[] = { "brave", "--ozone-platform=x11", "--incognito", NULL };
 
 static const Key keys[] = {
 	/* Note that Shift changes certain key codes: 2 -> at, etc. */
