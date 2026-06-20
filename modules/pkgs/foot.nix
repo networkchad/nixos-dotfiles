@@ -14,7 +14,7 @@
         foreground = "cccccc";
         regular0 = "000000";
         regular1 = "cd0000";
-        regular2 = "00ff00";
+        regular2 = "5c5cff";
         regular3 = "cdcd00";
         regular4 = "0000ee";
         regular5 = "cd00cd";
