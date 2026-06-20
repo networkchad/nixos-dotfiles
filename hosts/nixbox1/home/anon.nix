@@ -48,4 +48,8 @@
       '';
     };
   };
+
+  xsession.initExtra = lib.mkAfter ''
+    xrandr --output eDP-1 --auto --primary --output HDMI-1-0 --mode 2560x1440 --rate 144 --right-of eDP-1 &
+  '';
 }
