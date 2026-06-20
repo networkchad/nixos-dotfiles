@@ -3,9 +3,8 @@
 {
   imports = [
     ../../../modules/pkgs/slstatus.nix
-    ../../../modules/pkgs/oot.nix
+    ../../../modules/pkgs/foot.nix
     ../../../modules/pkgs/dwl.nix
-    ../../../modules/pkgs/fonts.nix
     ../../../modules/pkgs/fonts.nix
     ../../../modules/pkgs/swayidle.nix
   ];
