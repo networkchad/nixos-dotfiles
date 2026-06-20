@@ -1,8 +1,6 @@
 { config, pkgs, ... }:
 
 {
-  security.pam.services.swaylock = {};
-
   services.swayidle = {
     enable = true;
     
