@@ -26,6 +26,7 @@
         addons = with pkgs; [
           fcitx5-mozc
           fcitx5-chewing
+          fcitx5-gtk
         ];
       };
     };
