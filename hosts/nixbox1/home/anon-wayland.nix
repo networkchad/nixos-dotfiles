@@ -41,6 +41,7 @@
     brave
     librewolf
 
+    wayland-utils
     wmenu
     wl-clipboard
     swaybg
