@@ -29,7 +29,7 @@ static int log_level = WLR_ERROR;
 /* Autostart */
 static const char *const autostart[] = {
         "fcitx5", NULL,
-        "swaybg", "-i", "/home/anon/.config/wallpapers/2077.png", "-m", "fill", NULL,
+        "swaybg", "-i", "/home/anon/.config/wallpapers/bg.png", "-m", "fill", NULL,
 	"sway-audio-idle-inhibit", NULL,
 	"swayidle", "-w", "timeout", "300", "swaylock -fF", "before-sleep", "swaylock -fF", NULL,
         NULL /* terminate */

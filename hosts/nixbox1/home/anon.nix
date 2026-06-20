@@ -19,7 +19,7 @@
       recursive = true;
     };
 
-    "wallpapers/2077.png".source = ../../../pics/2077.png;
+    "wallpapers/bg.png".source = ../../../pics/2077.png;
   };
 
   home.packages = with pkgs; [

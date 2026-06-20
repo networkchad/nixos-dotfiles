@@ -19,8 +19,7 @@
       recursive = true;
     };
 
-    "wallpapers/nix-wallpaper-dracula.png".source =
-      ../../../pics/nix-wallpaper-dracula.png;
+    "wallpapers/bg.png".source = ../../../pics/nix-wallpaper-dracula.png;
   };
 
   home.packages = with pkgs; [
