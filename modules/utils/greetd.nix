@@ -8,7 +8,7 @@
           ${pkgs.tuigreet}/bin/tuigreet \
             --time \
             --remember \
-            --cmd dwl
+            --cmd "slstatus -s | dwl"
         '';
       };
     };
