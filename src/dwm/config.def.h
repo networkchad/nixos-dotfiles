@@ -59,7 +59,7 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray2, "-sb", col_gray3, "-sf", col_gray2, NULL };
-static const char *flameshotcmd[] = { "flameshot", "gui", NULL};
+static const char *screenshotcmd[] = { "flameshot", "gui", NULL};
 static const char *mutecmd[] = { "amixer", "-q", "set", "Master", "toggle", NULL };
 static const char *slockcmd[]  = { "slock", NULL };
 static const char *librewolfcmd[] = { "librewolf", "--private-window", NULL};
@@ -105,7 +105,7 @@ static const Key keys[] = {
 	/* custom config */
 	{ MODKEY,                       XK_f,                      spawn,          {.v = librewolfcmd } },
 	{ MODKEY,                       XK_v,                      spawn,          {.v = bravecmd } },
-	{ Mod4Mask,                     XK_s,                      spawn,          {.v = flameshotcmd } },
+	{ Mod4Mask,                     XK_s,                      spawn,          {.v = screenshotcmd } },
 	{ Mod4Mask,                     XK_m,                      spawn,          {.v = mutecmd } },
 	{ Mod4Mask,                     XK_l,                      spawn,          {.v = slockcmd } },
 
