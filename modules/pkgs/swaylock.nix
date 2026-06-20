@@ -4,7 +4,7 @@
   programs.swaylock = {
     enable = true;
     settings = {
-      color = "808080";
+      color = "000000";
       font-size = 24;
       indicator-idle-visible = false;
       indicator-radius = 100;
