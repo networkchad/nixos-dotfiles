@@ -26,6 +26,15 @@ static char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 /* logging */
 static int log_level = WLR_ERROR;
 
+/* Autostart */
+static const char *const autostart[] = {
+        "fcitx5", NULL,
+        "swaybg", "-i", "/home/anon/.config/wallpapers/bg.png", "-m", "fill", NULL,
+	"sway-audio-idle-inhibit", NULL,
+	"swayidle", "-w", "timeout", "300", "swaylock -fF", "before-sleep", "swaylock -fF", NULL,
+        NULL /* terminate */
+};
+
 static const Rule rules[] = {
 	/* app_id             title       tags mask     isfloating   monitor */
 	{ "Gimp_EXAMPLE",     NULL,       0,            1,           -1 }, /* Start on currently visible tags floating, not tiled */
@@ -124,6 +133,13 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 static const char *termcmd[] = { "foot", NULL };
 static const char *menucmd[] = { "wmenu-run", "-f", "monospace 16", "-N", "#000000", "-n", "#ffffff", "-S", "#ffffff", "-s", "#000000", NULL };
 static const char *librewolfcmd[] = { "librewolf", "--private-window", NULL };
+static const char *screenshotcmd[] = {
+    "sh", "-c",
+    "grim -g \"$(slurp)\" \"$HOME/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png\"",
+    NULL
+};
+static const char *swaylockcmd[] = { "swaylock", NULL};
+static const char *mutecmd[] = { "amixer", "-q", "set", "Master", "toggle", NULL };
 static const char *bravecmd[] = { "brave", "--incognito", NULL };
 
 static const Key keys[] = {
@@ -133,6 +149,9 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Return,      spawn,            {.v = termcmd} },
 	{ MODKEY,                    XKB_KEY_f,           spawn,            {.v = librewolfcmd} },
 	{ MODKEY,                    XKB_KEY_v,           spawn,            {.v = bravecmd} },
+	{ WLR_MODIFIER_LOGO,         XKB_KEY_l,           spawn,            {.v = swaylockcmd} },
+	{ WLR_MODIFIER_LOGO,         XKB_KEY_m,           spawn,            {.v = mutecmd} },
+	{ WLR_MODIFIER_LOGO,         XKB_KEY_s,           spawn,            {.v = screenshotcmd} },
 	{ MODKEY,                    XKB_KEY_j,           focusstack,       {.i = +1} },
 	{ MODKEY,                    XKB_KEY_k,           focusstack,       {.i = -1} },
 	{ MODKEY,                    XKB_KEY_i,           incnmaster,       {.i = +1} },
