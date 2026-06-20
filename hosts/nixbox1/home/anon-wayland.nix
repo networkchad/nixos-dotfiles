@@ -6,7 +6,6 @@
     ../../../modules/pkgs/foot.nix
     ../../../modules/pkgs/dwl.nix
     ../../../modules/pkgs/fonts.nix
-    ../../../modules/pkgs/swayidle.nix
     ../../../modules/pkgs/swaylock.nix
   ];
 
@@ -23,6 +22,8 @@
     
     "wallpapers/2077.png".source = ../../../pics/2077.png;
   };
+
+  services.swayidle.enable = true;
 
   # --- User Packages ---
   home.packages = with pkgs; [
