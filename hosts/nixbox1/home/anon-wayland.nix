@@ -3,7 +3,7 @@
 {
   imports = [
     ../../../modules/pkgs/slstatus.nix
-    ../../../modules/pkgs/foot.nix
+    ../../../modules/pkgs/oot.nix
     ../../../modules/pkgs/dwl.nix
     ../../../modules/pkgs/fonts.nix
     ../../../modules/pkgs/fonts.nix
@@ -30,6 +30,7 @@
     ani-cli
     pavucontrol
     mpv
+    flameshot
     fastfetch
     keepassxc
     alsa-utils
@@ -41,11 +42,9 @@
     librewolf
 
     wmenu
-    foot
     wl-clipboard
     swaybg
     wlr-randr
-    grim
   ];
 
   # --- Programs ---
