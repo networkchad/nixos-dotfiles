@@ -21,7 +21,7 @@
   ++ lib.optionals (sessionType == "wayland") [
     ../../modules/utils/wayland-addons.nix
     ../../modules/utils/greetd.nix
-    ../../modules/pkgs/swaylock.nix
+    ../../modules/utils/pam.nix
   ];
 
   networking.hostName = "nixbox2";
