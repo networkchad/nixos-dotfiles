@@ -46,6 +46,7 @@
     grim
     slurp
     satty
+    imv
   ];
 
   # --- Programs ---

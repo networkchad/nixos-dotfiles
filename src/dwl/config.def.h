@@ -131,7 +131,11 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 static const char *termcmd[] = { "foot", NULL };
 static const char *menucmd[] = { "wmenu-run", "-f", "monospace 16", "-N", "#000000", "-n", "#ffffff", "-S", "#ffffff", "-s", "#000000", NULL };
 static const char *librewolfcmd[] = { "librewolf", "--private-window", NULL };
-static const char *screenshotcmd[] = {"sh", "-c", "grim -g \"$(slurp)\" - | satty --filename -", NULL };
+static const char *screenshotcmd[] = {
+    "sh", "-c",
+    "grim -g \"$(slurp)\" \"$HOME/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png\"",
+    NULL
+};
 static const char *swaylockcmd[] = { "swaylock", NULL};
 static const char *mutecmd[] = { "amixer", "-q", "set", "Master", "toggle", NULL };
 static const char *bravecmd[] = { "brave", "--incognito", NULL };
