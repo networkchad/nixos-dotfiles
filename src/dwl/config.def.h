@@ -31,7 +31,7 @@ static const char *const autostart[] = {
         "fcitx5", NULL,
         "swaybg", "-i", "/home/anon/.config/wallpapers/2077.png", "-m", "fill", NULL,
 	"sway-audio-idle-inhibit", NULL,
-	"swayidle", "-w", "timeout", "30", "swaylock -fF", "before-sleep", "swaylock -fF", NULL,
+	"swayidle", "-w", "timeout", "300", "swaylock -fF", "before-sleep", "swaylock -fF", NULL,
         NULL /* terminate */
 };
 
