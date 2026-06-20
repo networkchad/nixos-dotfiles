@@ -10,22 +10,24 @@
 
   outputs = { self, nixpkgs, home-manager, ... }:
     let
-      system = "x86_64-linux";
       lib = nixpkgs.lib;
 
       hosts = {
         nixbox1 = {
+          system = "x86_64-linux";
           users = [ "anon" ];
           sessionType = "x";
         };
 
         nixbox2 = {
+          system = "x86_64-linux";
           users = [ "anon" ];
           sessionType = "wayland";
         };
+        
       };
 
-      mkSystem = hostName: { users, sessionType }:
+      mkSystem = hostName: { users, sessionType, system ? "x86_64-linux" }:
         lib.nixosSystem {
           inherit system;
 
