@@ -7,6 +7,7 @@
     ../../../modules/pkgs/dwl.nix
     ../../../modules/pkgs/fonts.nix
     ../../../modules/pkgs/swayidle.nix
+    ../../../modules/pkgs/swaylock.nix
   ];
 
   home.username = "anon";
@@ -53,7 +54,6 @@
   programs = {
     home-manager.enable = true;
     btop.enable = true;
-    swaylock.enable = true;
 
     vim = {
       enable = true;
