@@ -1,4 +1,4 @@
-{ config, pkgs, lib, sessionType, ... }:
+{ config, pkgs, lib, hostName, sessionType, ... }:
 
 {
   imports = [
@@ -25,7 +25,7 @@
     ../../modules/utils/pam.nix
   ];
 
-  networking.hostName = "nixbox1";
+  networking.hostName = hostName;
 
   # --- User Accounts ---
   users.users."anon" = {

@@ -30,7 +30,7 @@
           inherit system;
 
           specialArgs = {
-            inherit sessionType;
+            inherit hostName sessionType;
           };
 
           modules = [
@@ -44,7 +44,7 @@
               home-manager.backupFileExtension = "backup";
 
               home-manager.extraSpecialArgs = {
-                inherit sessionType;
+                inherit hostName sessionType;
               };
 
               home-manager.users =
