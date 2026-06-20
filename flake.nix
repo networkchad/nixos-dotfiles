@@ -3,49 +3,58 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    wayland-pipewire-idle-inhibit.url = "github:rafaelrc7/wayland-pipewire-idle-inhibit";
+    wayland-pipewire-idle-inhibit.url =
+      "github:rafaelrc7/wayland-pipewire-idle-inhibit";
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }:
+  outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let
       system = "x86_64-linux";
       lib = nixpkgs.lib;
 
       hosts = {
-        nixbox1 = { 
-          users = [ "anon" ]; 
+        nixbox1 = {
+          users = [ "anon" ];
           sessionType = "wayland";
-        }; 
-        nixbox2 = { 
-          users = [ "anon" ]; 
+        };
+
+        nixbox2 = {
+          users = [ "anon" ];
           sessionType = "x";
         };
       };
 
-      mkSystem = hostName: { users, sessionType }: lib.nixosSystem {
-        inherit system;
-        
-        specialArgs = { inherit sessionType; }; 
+      mkSystem = hostName: { users, sessionType }:
+        lib.nixosSystem {
+          inherit system;
 
-        modules = [
-          ./hosts/${hostName}/configuration.nix
-          
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.backupFileExtension = "backup";
-            
-            home-manager.users = lib.genAttrs users (user: 
-              import ./hosts/${hostName}/home/${user}-${sessionType}.nix
-            );
-          }
-        ];
-      };
+          specialArgs = {
+            inherit sessionType inputs;
+          };
 
+          modules =
+            [
+              ./hosts/${hostName}/configuration.nix
+
+              home-manager.nixosModules.home-manager
+              {
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+                home-manager.backupFileExtension = "backup";
+
+                home-manager.users = lib.genAttrs users (user:
+                  import ./hosts/${hostName}/home/${user}-${sessionType}.nix
+                );
+              }
+            ]
+            ++ lib.optionals (sessionType == "wayland") [
+              inputs.wayland-pipewire-idle-inhibit.nixosModules.default
+            ];
+        };
     in {
       nixosConfigurations = builtins.mapAttrs mkSystem hosts;
     };
