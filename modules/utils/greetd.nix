@@ -3,7 +3,7 @@
 let
   sessionCommand =
     if sessionType == "dwm" then
-      "--sessions /run/current-system/sw/share/xsessions"
+      "--cmd ${pkgs.xorg.xinit}/bin/startx dwm"
     else if sessionType == "dwl" then
       "--cmd \"slstatus -s | dwl\""
     else
