@@ -3,9 +3,9 @@
 let
   sessionCommand =
     if sessionType == "dwm" then
-      "dwm"
+      "--sessions /run/current-system/sw/share/xsessions"
     else if sessionType == "dwl" then
-      "slstatus -s | dwl"
+      "--cmd \"slstatus -s | dwl\""
     else
       throw "Unsupported sessionType: ${sessionType}";
 in
@@ -21,7 +21,7 @@ in
           --time \
           --remember \
           --asterisks \
-          --cmd "${sessionCommand}"
+          ${sessionCommand}
       '';
     };
   };
