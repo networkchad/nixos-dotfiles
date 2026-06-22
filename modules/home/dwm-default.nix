@@ -27,6 +27,8 @@
 
   xsession = {
     enable = true;
+    
+    windowManager.command = "exec dwm";
 
     initExtra = ''
       fcitx5 -d &

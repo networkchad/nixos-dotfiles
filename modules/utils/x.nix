@@ -6,4 +6,8 @@
     autoRepeatDelay = 200;
     autoRepeatInterval = 35;
   };
+
+  environment.systemPackages = with pkgs; [
+    xorg.xinit
+  ];
 }
