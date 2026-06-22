@@ -22,7 +22,6 @@
   ++ lib.optionals (sessionType == "dwl") [
     ../../modules/utils/wayland-addons.nix
     ../../modules/utils/greetd.nix
-    ../../modules/utils/pam.nix
   ];
 
   networking.hostName = hostName;
