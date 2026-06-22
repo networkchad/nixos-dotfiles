@@ -3,7 +3,7 @@
 let
   sessionCommand =
     if sessionType == "dwm" then
-      "startx"
+      "dwm"
     else if sessionType == "dwl" then
       "slstatus -s | dwl"
     else
