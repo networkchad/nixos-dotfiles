@@ -1,13 +1,12 @@
-{ pkgs, sessionType, ... }:
+{ pkgs, config, sessionType, ... }:
 
 let
-  sessionCommand =
-    if sessionType == "dwm" then
-      "~/.xsession dwm"
-    else if sessionType == "dwl" then
-      "slstatus -s | dwl"
-    else
-      throw "Unsupported sessionType: ${sessionType}";
+  sessions = {
+    "dwl"  = "slstatus -s | dwl";
+    "niri" = "${config.programs.niri.package}/bin/niri-session";
+  };
+
+  sessionCommand = sessions.${sessionType} or (throw "Unsupported sessionType: ${sessionType}");
 in
 {
   services.greetd = {
