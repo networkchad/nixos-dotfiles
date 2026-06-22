@@ -12,7 +12,6 @@
     ../../modules/utils/i18n.nix
     ../../modules/utils/keyboard-jp.nix
     ../../modules/utils/pipewire.nix
-    ../../modules/utils/greetd.nix
   ]
   ++ lib.optionals (sessionType == "dwm") [
     ../../modules/utils/x.nix
@@ -22,6 +21,7 @@
   ]
   ++ lib.optionals (sessionType == "dwl") [
     ../../modules/utils/wayland-addons.nix
+    ../../modules/utils/greetd.nix
   ];
 
   networking.hostName = hostName;
