@@ -10,4 +10,6 @@
   ];
 
   i18n.inputMethod.fcitx5.waylandFrontend = true;
+
+  security.pam.services.swaylock = {};
 }
