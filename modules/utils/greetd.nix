@@ -3,9 +3,9 @@
 let
   sessionCommand =
     if sessionType == "dwm" then
-      "--cmd ${pkgs.xinit}/bin/startx dwm"
+      "startx"
     else if sessionType == "dwl" then
-      "--cmd \"slstatus -s | dwl\""
+      "slstatus -s | dwl"
     else
       throw "Unsupported sessionType: ${sessionType}";
 in
@@ -21,7 +21,7 @@ in
           --time \
           --remember \
           --asterisks \
-          ${sessionCommand}
+          --cmd "${sessionCommand}"
       '';
     };
   };

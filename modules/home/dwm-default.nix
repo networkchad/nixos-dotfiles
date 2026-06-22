@@ -34,6 +34,7 @@
       feh --bg-fill $HOME/.config/wallpapers/bg.png &
       xset s 300
       xss-lock -- slock &
+      exec dwm
     '';
   };
 }
