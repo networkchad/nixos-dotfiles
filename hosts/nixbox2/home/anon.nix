@@ -2,11 +2,11 @@
 
 {
   imports =
-    lib.optionals (sessionType == "x") [
-      ../../../modules/home/x-default.nix
+    lib.optionals (sessionType == "dwm") [
+      ../../../modules/home/dwm-default.nix
     ]
-    ++ lib.optionals (sessionType == "wayland") [
-      ../../../modules/home/wayland-default.nix
+    ++ lib.optionals (sessionType == "dwl") [
+      ../../../modules/home/dwl-default.nix
     ];
 
   home.username = "anon";

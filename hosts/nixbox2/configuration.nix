@@ -12,13 +12,13 @@
     ../../modules/utils/keyboard-us.nix
     ../../modules/utils/pipewire.nix
   ]
-  ++ lib.optionals (sessionType == "x") [
+  ++ lib.optionals (sessionType == "dwm") [
     ../../modules/utils/x.nix
     ../../modules/utils/ly.nix
     ../../modules/pkgs/dwm.nix
     ../../modules/pkgs/slock.nix
   ]
-  ++ lib.optionals (sessionType == "wayland") [
+  ++ lib.optionals (sessionType == "dwl") [
     ../../modules/utils/wayland-addons.nix
     ../../modules/utils/greetd.nix
     ../../modules/utils/pam.nix

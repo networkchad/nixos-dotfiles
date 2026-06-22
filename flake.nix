@@ -16,13 +16,13 @@
         nixbox1 = {
           system = "x86_64-linux";
           users = [ "anon" ];
-          sessionType = "x";
+          sessionType = "dwm";
         };
 
         nixbox2 = {
           system = "x86_64-linux";
           users = [ "anon" ];
-          sessionType = "wayland";
+          sessionType = "dwl";
         };
         
       };
