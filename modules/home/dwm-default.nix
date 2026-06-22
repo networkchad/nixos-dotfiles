@@ -25,13 +25,17 @@
     };
   };
 
-  xsession.enable = true;
+  xsession = {
+    enable = true;
 
-  xsession.initExtra = ''
-    fcitx5 -d &
-    slstatus &
-    feh --bg-fill $HOME/.config/wallpapers/bg.png &
-    xset s 300
-    xss-lock -- slock &
-  '';
+    windowManager.command = "exec dwm";
+
+    initExtra = ''
+      fcitx5 -d &
+      slstatus &
+      feh --bg-fill $HOME/.config/wallpapers/bg.png &
+      xset s 300
+      xss-lock -- slock &
+    '';
+  };
 }
