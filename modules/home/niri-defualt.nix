@@ -11,8 +11,6 @@
   xdg.configFile."niri/config.kdl".source = ../../src/niri/config.kdl;
 
   home.packages = with pkgs; [
-    alacritty
-    fuzzel
     wl-clipboard
     swaybg
     wlr-randr
@@ -22,11 +20,21 @@
     imv
   ];
 
-  programs.bash = {
-    enable = true;
+  programs = {
+    bash = {
+      enable = true;
 
-    shellAliases = {
-      copy = "wl-copy <";
+      shellAliases = {
+        copy = "wl-copy <";
+      };
+    };
+
+    alacritty = {
+      enable = true;
+    };
+
+    fuzzel = {
+      enable = true;
     };
   };
 }
