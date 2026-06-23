@@ -6,31 +6,16 @@
       modules-left = [ ];
 
       modules-center = [
-        "custom/internet"
-        "custom/vpn"
-        "custom/volume"
         "cpu"
         "memory"
+        "custom/vpn"
+        "custom/internet"
+        "custom/volume"
         "battery"
         "clock"
       ];
 
       modules-right = [ ];
-
-      "custom/internet" = {
-        exec = "printf 'Net:%s' \"$(${HOME}/.config/slstatus/scripts/internet.sh)\"";
-        interval = 5;
-      };
-
-      "custom/vpn" = {
-        exec = "printf 'VPN:%s' \"$(${HOME}/.config/slstatus/scripts/vpn.sh)\"";
-        interval = 5;
-      };
-
-      "custom/volume" = {
-        exec = "printf 'Vol:%s' \"$(${HOME}/.config/slstatus/scripts/volume.sh)\"";
-        interval = 1;
-      };
 
       cpu = {
         format = "CPU:{usage}%";
@@ -41,25 +26,43 @@
       };
 
       battery = {
-        format = "Bat:{capacity}%";
+        format = "B:{capacity}%";
       };
 
       clock = {
         format = "{:%Y-%m-%d %H:%M}";
       };
+
+      "custom/internet" = {
+        exec = "bash -c '~/.config/slstatus/scripts/internet.sh'";
+        interval = 5;
+        format = "Net:{}";
+      };
+
+      "custom/vpn" = {
+        exec = "bash -c '~/.config/slstatus/scripts/vpn.sh'";
+        interval = 5;
+        format = "VPN:{}";
+      };
+
+      "custom/volume" = {
+        exec = "bash -c '~/.config/slstatus/scripts/volume.sh'";
+        interval = 1;
+        format = "Vol:{}";
+      };
     };
 
     style = ''
       window#waybar {
-        background: #000;
-        color: #fff;
+        background: #000000;
+        color: #ffffff;
       }
 
       * {
         border: none;
         border-radius: 0;
         min-height: 0;
-        padding: 0 3px;
+        padding: 0 4px;
       }
     '';
   };
