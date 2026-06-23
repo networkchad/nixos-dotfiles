@@ -1,3 +1,6 @@
-programs.niri.enable = true;
+{ pkgs, ... }:
 
-systemd.user.services.niri.enableDefaultPath = false;
+{
+  programs.niri.enable = true;
+  systemd.user.services.niri.enableDefaultPath = false;
+}
