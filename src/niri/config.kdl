@@ -274,7 +274,7 @@ layout {
 spawn-at-startup "fcitx5"
 spawn-sh-at-startup "swaybg -i ~/.config/wallpapers/bg.png"
 spawn-sh-at-startup "sway-audio-idle-inhibit"
-spawn-sh-at-startup "swayidle -w timeout 10 'swaylock -fF' before-sleep 'swaylock -fF'"
+spawn-sh-at-startup "swayidle -w timeout 300 'swaylock -fF' before-sleep 'swaylock -fF'"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
@@ -370,7 +370,7 @@ binds {
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Alt+Shift+Return hotkey-overlay-title="Open a Terminal: alacritty" { spawn "alacritty"; }
     Alt+P hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
-    Alt+F hotkey-overlay-title="Run an Application: librewolf" { spawn "librewolf" "--private--window"; }
+    Alt+F hotkey-overlay-title="Run an Application: librewolf" { spawn "librewolf" "--private-window"; }
     Alt+V hotkey-overlay-title="Run an Application: brave" { spawn "brave" "--incognito"; }
     Super+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
 
