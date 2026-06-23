@@ -274,7 +274,7 @@ layout {
 spawn-at-startup "fcitx5"
 spawn-at-startup "swaybg" "-i" "$HOME/.config/wallpapers/bg.png"
 spawn-at-startup "sway-audio-idle-inhibit"
-spawn-at-startup "swayidle" "-w" "timeout" "300" "swaylock -fF" "before-sleep" "swaylock -fF"
+spawn-at-startup "swayidle" "-w" "timeout" "300" "swaylock" "-fF" "before-sleep" "swaylock" "-fF"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
