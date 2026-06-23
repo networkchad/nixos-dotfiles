@@ -4,6 +4,7 @@
   imports = [
     ../pkgs/fonts.nix
     ../pkgs/swaylock.nix
+    ../pkgs/waybar.nix
   ];
 
   services.swayidle.enable = true;
