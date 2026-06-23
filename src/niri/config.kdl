@@ -370,8 +370,8 @@ binds {
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Alt+Shift+Return hotkey-overlay-title="Open a Terminal: alacritty" { spawn "alacritty"; }
     Alt+P hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
-    Alt+F hotkey-overlay-title="Run an Application: librewolf" { spawn "librewolf --private--window"; }
-    Alt+V hotkey-overlay-title="Run an Application: brave" { spawn "brave --incognito"; }
+    Alt+F hotkey-overlay-title="Run an Application: librewolf" { spawn "librewolf" "--private--window"; }
+    Alt+V hotkey-overlay-title="Run an Application: brave" { spawn "brave" "--incognito"; }
     Super+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
