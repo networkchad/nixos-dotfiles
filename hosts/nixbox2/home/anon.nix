@@ -7,6 +7,9 @@
     ]
     ++ lib.optionals (sessionType == "dwl") [
       ../../../modules/home/dwl-default.nix
+    ]
+    ++ lib.optionals (sessionType == "niri") [
+      ../../../modules/home/niri-default.nix
     ];
 
   home.username = "anon";
