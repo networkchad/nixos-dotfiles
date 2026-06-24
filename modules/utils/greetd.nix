@@ -3,7 +3,6 @@
 let
   sessions = {
     "dwl"  = "slstatus -s | dwl";
-    "niri" = "${config.programs.niri.package}/bin/niri-session";
   };
 
   sessionCommand = sessions.${sessionType} or (throw "Unsupported sessionType: ${sessionType}");
