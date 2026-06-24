@@ -22,7 +22,7 @@
         nixbox2 = {
           system = "x86_64-linux";
           users = [ "anon" ];
-          sessionType = "niri";
+          sessionType = "dwl";
         };
         
       };
