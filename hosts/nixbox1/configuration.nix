@@ -15,7 +15,7 @@
   ]
   ++ lib.optionals (sessionType == "dwm") [
     ../../modules/utils/x.nix
-    ../../modules/utils/greetd.nix
+    ../../modules/utils/ly.nix
     ../../modules/pkgs/dwm.nix
     ../../modules/pkgs/slock.nix
   ]
