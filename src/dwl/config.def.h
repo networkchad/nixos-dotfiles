@@ -32,7 +32,7 @@ static int log_level = WLR_ERROR;
 /* Autostart */
 static const char *const autostart[] = {
         "fcitx5", NULL,
-	"wlr-randr", "--output", "HDMI-A-2", "--mode", "2560x1440@143.994995Hz", NULL,
+	"wlr-randr", "--output", "HDMI-A-2", "--mode", "3840x2160@59.940", NULL,
 	"sh", "-c", "swaybg -i ~/.config/wallpapers/bg.png -m fill", NULL,
 	"sway-audio-idle-inhibit", NULL,
 	"swayidle", "-w", "timeout", "300", "swaylock -fF", "before-sleep", "swaylock -fF", NULL,
