@@ -5,11 +5,11 @@
     enable = true;
     settings = {
       main = {
-        font = "monospace:size=11";
+        font = "monospace:size=16";
         dpi-aware = "yes";
       };
       colors-dark = {
-        alpha = "0.4";
+        alpha = "0.6";
         background = "111111";
         foreground = "cccccc";
       };
