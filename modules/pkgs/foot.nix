@@ -5,7 +5,7 @@
     enable = true;
     settings = {
       main = {
-        font = "monospace:size=16";
+        font = "monospace:size=14";
         dpi-aware = "yes";
       };
       colors-dark = {
