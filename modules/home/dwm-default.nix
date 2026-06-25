@@ -31,10 +31,10 @@
     initExtra = ''
       fcitx5 -d &
       slstatus &
+      xrandr --output eDP-1 --auto --primary --output HDMI-1-0 --mode 2560x1440 --rate 144 --right-of eDP-1 &
       feh --bg-fill $HOME/.config/wallpapers/bg.png &
       xset s 300
       xss-lock -- slock &
-      xrandr --output eDP-1 --auto --primary --output HDMI-1-0 --mode 2560x1440 --rate 144 --right-of eDP-1 &
     '';
   };
 }
