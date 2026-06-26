@@ -16,7 +16,7 @@
         nixbox1 = {
           system = "x86_64-linux";
           users = [ "anon" ];
-          sessionType = "dwl";
+          sessionType = "dwm";
         };
 
         nixbox2 = {
