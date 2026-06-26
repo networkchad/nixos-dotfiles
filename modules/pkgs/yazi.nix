@@ -15,7 +15,7 @@
                 "dwm" = "${pkgs.feh}/bin/feh --start-at \"$1\" .";
                 "dwl" = "${pkgs.imv}/bin/imv -n \"$1\" .";
               };
-            in viewers.${sessionType} or "${pkgs.imv}/bin/imv -n \"$1\" .";
+            in viewers.${sessionType};
             desc = "View Image Directory";
           }
         ];

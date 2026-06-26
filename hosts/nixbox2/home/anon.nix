@@ -1,4 +1,4 @@
-{ config, pkgs, lib, sessionType, ... }:
+{ pkgs, lib, sessionType, ... }:
 
 {
   imports = [
@@ -25,7 +25,6 @@
   };
 
   home.packages = with pkgs; [
-    # CLI & Utilities
     ani-cli
     pavucontrol
     mpv
