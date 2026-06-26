@@ -1,13 +1,15 @@
 { config, pkgs, lib, sessionType, ... }:
 
 {
-  imports =
-    lib.optionals (sessionType == "dwm") [
-      ../../../modules/home/dwm-default.nix
-    ]
-    ++ lib.optionals (sessionType == "dwl") [
-      ../../../modules/home/dwl-default.nix
-    ];
+  imports = [
+    ../../../modules/pkgs/yazi.nix
+  ]  
+  ++ lib.optionals (sessionType == "dwm") [
+    ../../../modules/home/dwm-default.nix
+  ]
+  ++ lib.optionals (sessionType == "dwl") [
+    ../../../modules/home/dwl-default.nix
+  ];
 
   home.username = "anon";
   home.homeDirectory = "/home/anon";
