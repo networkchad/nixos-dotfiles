@@ -8,25 +8,31 @@
 
     settings = {
       opener = {
-        image_viewer = {
-          exec = let
-            viewers = {
-              "dwm" = "${pkgs.feh}/bin/feh --start-at \"$1\" .";
-              "dwl" = "${pkgs.imv}/bin/imv -n \"$1\" .";
-            };
-          in viewers.${sessionType} or "${pkgs.imv}/bin/imv -n \"$1\" .";
-          desc = "View Image Directory";
-        };
+        image_viewer = [
+          {
+            exec = let
+              viewers = {
+                "dwm" = "${pkgs.feh}/bin/feh --start-at \"$1\" .";
+                "dwl" = "${pkgs.imv}/bin/imv -n \"$1\" .";
+              };
+            in viewers.${sessionType} or "${pkgs.imv}/bin/imv -n \"$1\" .";
+            desc = "View Image Directory";
+          }
+        ];
 
-        media_player = {
-          exec = "${pkgs.mpv}/bin/mpv --force-window=yes \"$@\"";
-          desc = "Play Media (Forced Window)";
-        };
+        media_player = [
+          {
+            exec = "${pkgs.mpv}/bin/mpv --force-window=yes \"$@\"";
+            desc = "Play Media (Forced Window)";
+          }
+        ];
 
-        generic_browser = {
-          exec = "xdg-open \"$@\"";
-          desc = "Open with Default Browser/Viewer";
-        };
+        generic_browser = [
+          {
+            exec = "xdg-open \"$@\"";
+            desc = "Open with Default Browser/Viewer";
+          }
+        ];
       };
 
       open = {
