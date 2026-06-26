@@ -10,7 +10,7 @@
       opener = {
         image_viewer = [
           {
-            exec = let
+            run = let
               viewers = {
                 "dwm" = "${pkgs.feh}/bin/feh --start-at \"$1\" .";
                 "dwl" = "${pkgs.imv}/bin/imv -n \"$1\" .";
@@ -22,14 +22,14 @@
 
         media_player = [
           {
-            exec = "${pkgs.mpv}/bin/mpv --force-window=yes \"$@\"";
+            run = "${pkgs.mpv}/bin/mpv --force-window=yes \"$@\"";
             desc = "Play Media (Forced Window)";
           }
         ];
 
         generic_browser = [
           {
-            exec = "xdg-open \"$@\"";
+            run = "xdg-open \"$@\"";
             desc = "Open with Default Browser/Viewer";
           }
         ];
