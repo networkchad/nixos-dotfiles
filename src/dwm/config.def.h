@@ -103,8 +103,8 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 
 	/* custom config */
-	{ MODKEY,                       XK_f,                      spawn,          {.v = librewolfcmd } },
-	{ MODKEY,                       XK_v,                      spawn,          {.v = bravecmd } },
+	{ Mod4Mask,                     XK_f,                      spawn,          {.v = librewolfcmd } },
+	{ Mod4Mask,                     XK_v,                      spawn,          {.v = bravecmd } },
 	{ Mod4Mask,                     XK_s,                      spawn,          {.v = screenshotcmd } },
 	{ Mod4Mask,                     XK_m,                      spawn,          {.v = mutecmd } },
 	{ Mod4Mask,                     XK_l,                      spawn,          {.v = slockcmd } },

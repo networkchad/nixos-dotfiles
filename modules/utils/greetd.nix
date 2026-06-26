@@ -1,4 +1,4 @@
-{ pkgs, config, sessionType, ... }:
+{ pkgs, sessionType, ... }:
 
 let
   sessions = {

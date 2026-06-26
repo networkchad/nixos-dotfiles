@@ -32,8 +32,7 @@
     alsa-utils
     uv
     devenv
-
-    # Desktop Applications / GUI
+    dysk
     brave
     librewolf
   ];

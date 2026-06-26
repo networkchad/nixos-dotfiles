@@ -151,8 +151,8 @@ static const Key keys[] = {
 	/* modifier                  key                  function          argument */
 	{ MODKEY,                    XKB_KEY_p,           spawn,            {.v = menucmd} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Return,      spawn,            {.v = termcmd} },
-	{ MODKEY,                    XKB_KEY_f,           spawn,            {.v = librewolfcmd} },
-	{ MODKEY,                    XKB_KEY_v,           spawn,            {.v = bravecmd} },
+	{ WLR_MODIFIER_LOGO,         XKB_KEY_f,           spawn,            {.v = librewolfcmd} },
+	{ WLR_MODIFIER_LOGO,         XKB_KEY_v,           spawn,            {.v = bravecmd} },
 	{ WLR_MODIFIER_LOGO,         XKB_KEY_l,           spawn,            {.v = swaylockcmd} },
 	{ WLR_MODIFIER_LOGO,         XKB_KEY_m,           spawn,            {.v = mutecmd} },
 	{ WLR_MODIFIER_LOGO,         XKB_KEY_s,           spawn,            {.v = screenshotcmd} },

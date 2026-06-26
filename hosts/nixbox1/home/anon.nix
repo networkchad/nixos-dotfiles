@@ -31,7 +31,7 @@
     alsa-utils
     uv
     devenv
-
+    dysk
     brave
     librewolf
   ];
