@@ -3,7 +3,7 @@
 {
   imports = [
     ../../../modules/pkgs/yazi.nix
-  ];
+  ]
   ++ lib.optionals (sessionType == "dwm") [
     ../../../modules/home/dwm-default.nix
   ]
