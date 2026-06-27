@@ -2,7 +2,7 @@
 
 let
   sessions = {
-    "dwm" = "dwm";
+    "dwm" = "${pkgs.xinit}/bin/startx ${pkgs.dwm}/bin/dwm";
     "dwl"  = "slstatus -s | dwl";
   };
 
