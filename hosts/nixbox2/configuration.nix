@@ -14,13 +14,11 @@
   ]
   ++ lib.optionals (sessionType == "dwm") [
     ../../modules/utils/x.nix
-    ../../modules/utils/ly.nix
     ../../modules/pkgs/dwm.nix
     ../../modules/pkgs/slock.nix
   ]
   ++ lib.optionals (sessionType == "dwl") [
     ../../modules/utils/wayland-addons.nix
-    ../../modules/utils/greetd.nix
   ];
 
   networking.hostName = hostName;
