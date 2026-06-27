@@ -2,6 +2,7 @@
 
 let
   sessions = {
+    "dwm" = "dwm";
     "dwl"  = "slstatus -s | dwl";
   };
 
