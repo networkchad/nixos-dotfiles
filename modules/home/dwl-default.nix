@@ -29,7 +29,7 @@
     shellAliases = {
       copy = "wl-copy <";
     };
-    loginExtra = ''
+    profileExtra = ''
       if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
         exec bash -c 'slstatus -s | dwl'
       fi

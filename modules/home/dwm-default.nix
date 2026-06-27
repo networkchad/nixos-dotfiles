@@ -23,7 +23,7 @@
     shellAliases = {
       copy = "xclip -selection clipboard -i";
     };
-    loginExtra = ''
+    profileExtra = ''
       if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
         exec startx "$HOME/.xsession"
       fi
