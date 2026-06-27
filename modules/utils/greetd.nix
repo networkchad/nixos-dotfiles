@@ -2,8 +2,8 @@
 
 let
   sessions = {
-    "dwm" = "${pkgs.xinit}/bin/startx";
-    "dwl"  = "slstatus -s | dwl";
+    "dwm" = "${pkgs.bash}/bin/bash -c '${pkgs.xinit}/bin/startx \$HOME/.xsession'";
+    "dwl" = "${pkgs.bash}/bin/bash -c 'slstatus -s | dwl'";
   };
 
   sessionCommand = sessions.${sessionType} or (throw "Unsupported sessionType: ${sessionType}");
