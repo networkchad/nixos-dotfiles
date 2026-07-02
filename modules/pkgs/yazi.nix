@@ -29,7 +29,7 @@
 
         generic_browser = [
           {
-            run = "xdg-open \"$@\"";
+            run = "librewolf --private-window \"$@\"";
             desc = "Open with Default Browser/Viewer";
           }
         ];
