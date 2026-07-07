@@ -25,7 +25,6 @@
   };
 
   home.packages = with pkgs; [
-    ani-cli
     pavucontrol
     mpv
     fastfetch
