@@ -12,51 +12,68 @@
     let
       lib = nixpkgs.lib;
 
+      # A "session" bundles the system and home modules a WM stack needs.
+      # Selecting a session below is path interpolation: an unknown value
+      # fails evaluation instead of silently importing nothing.
+      sessions = {
+        dwm = {
+          system = ./modules/nixos/sessions/dwm.nix;
+          home   = ./modules/home/sessions/dwm.nix;
+        };
+        dwl = {
+          system = ./modules/nixos/sessions/dwl.nix;
+          home   = ./modules/home/sessions/dwl.nix;
+        };
+      };
+
       hosts = {
         nixbox1 = {
           system = "x86_64-linux";
           users = [ "anon" ];
-          sessionType = "dwm";
+          session = "dwm";
         };
-
         nixbox2 = {
           system = "x86_64-linux";
           users = [ "anon" ];
-          sessionType = "dwl";
+          session = "dwl";
         };
-        
       };
 
-      mkSystem = hostName: { users, sessionType, system ? "x86_64-linux" }:
+      mkSystem = hostName: { system ? "x86_64-linux", users, session }:
+        let
+          sess = if lib.hasAttr session sessions
+            then sessions.${session}
+            else throw "unknown session '${session}' for host '${hostName}' (available: ${lib.concatStringsSep ", " (lib.attrNames sessions)})";
+        in
         lib.nixosSystem {
           inherit system;
 
           specialArgs = {
-            inherit hostName sessionType;
+            inherit hostName;
           };
 
           modules = [
+            ./hosts/common.nix
+            sess.system
             ./hosts/${hostName}/configuration.nix
 
             home-manager.nixosModules.home-manager
-
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.backupFileExtension = "backup";
 
-              home-manager.extraSpecialArgs = {
-                inherit hostName sessionType;
-              };
-
-              home-manager.users =
-                lib.genAttrs users (user:
-                  import ./hosts/${hostName}/home/${user}.nix
-                );
+              home-manager.users = lib.genAttrs users (_: {
+                imports = [
+                  ./modules/home/common.nix
+                  sess.home
+                  ./hosts/${hostName}/home/anon.nix
+                ];
+              });
             }
           ];
         };
     in {
-      nixosConfigurations = builtins.mapAttrs mkSystem hosts;
+      nixosConfigurations = lib.mapAttrs mkSystem hosts;
     };
 }

@@ -2,25 +2,30 @@
 
 {
   imports = [
-    ../pkgs/slstatus.nix
-    ../pkgs/foot.nix
-    ../pkgs/dwl.nix
-    ../pkgs/fonts.nix
-    ../pkgs/swaylock.nix
+    ../packages/dwl.nix
+    ../packages/foot.nix
+    ../packages/slstatus.nix
+    ../packages/swaylock.nix
   ];
-
-  services.swayidle.enable = true;
 
   home.packages = with pkgs; [
     wayland-utils
     wmenu
     wl-clipboard
     swaybg
+    swayidle
     wlr-randr
     grim
     slurp
     satty
     imv
+  ];
+
+  programs.yazi.settings.opener.image_viewer = [
+    {
+      run = "${pkgs.imv}/bin/imv -n \"$1\" .";
+      desc = "View Image Directory";
+    }
   ];
 
   programs.bash = {

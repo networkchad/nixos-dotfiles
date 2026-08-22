@@ -3,7 +3,7 @@
 {
   home.packages = [
     (pkgs.dwl.overrideAttrs (oldAttrs: {
-      src = ../../src/dwl; 
+      src = ../../../src/dwl; 
       
       buildInputs = (oldAttrs.buildInputs or []) ++ [
         pkgs.fcft

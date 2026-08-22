@@ -1,53 +1,11 @@
-{ pkgs, lib, sessionType, ... }:
+{ pkgs, ... }:
 
+# Host-specific home deltas only; everything shared lives in
+# ../../modules/home/common.nix and the session module.
 {
-  imports = [
-    ../../../modules/pkgs/yazi.nix
-  ]
-  ++ lib.optionals (sessionType == "dwm") [
-    ../../../modules/home/dwm-default.nix
-  ]
-  ++ lib.optionals (sessionType == "dwl") [
-    ../../../modules/home/dwl-default.nix
+  xdg.configFile."wallpapers/bg.png".source = ../../../pics/2077.png;
+
+  home.packages = [
+    pkgs.pi-coding-agent
   ];
-
-  home.username = "anon";
-  home.homeDirectory = "/home/anon";
-  home.stateVersion = "26.05";
-
-  xdg.configFile = {
-    "slstatus/scripts" = {
-      source = ../../../src/slstatus/scripts;
-      recursive = true;
-    };
-
-    "wallpapers/bg.png".source = ../../../pics/2077.png;
-  };
-
-  home.packages = with pkgs; [
-    pavucontrol
-    mpv
-    fastfetch
-    keepassxc
-    alsa-utils
-    uv
-    devenv
-    dysk
-    brave
-    librewolf
-    pi-coding-agent
-  ];
-
-  programs = {
-    home-manager.enable = true;
-    btop.enable = true;
-
-    vim = {
-      enable = true;
-      extraConfig = ''
-        syntax on
-        set number
-      '';
-    };
-  };
 }

@@ -2,11 +2,9 @@
 
 {
   imports = [
-    ../pkgs/st.nix
-    ../pkgs/slstatus.nix
+    ../packages/st.nix
+    ../packages/slstatus.nix
   ];
-
-  services.picom.enable = true;
 
   home.packages = with pkgs; [
     feh
@@ -15,6 +13,13 @@
     arandr
     xss-lock
     dmenu
+  ];
+
+  programs.yazi.settings.opener.image_viewer = [
+    {
+      run = "${pkgs.feh}/bin/feh --start-at \"$1\" .";
+      desc = "View Image Directory";
+    }
   ];
 
   programs.bash = {
