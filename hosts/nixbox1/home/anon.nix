@@ -1,11 +1,7 @@
-{ pkgs, ... }:
+{ ... }:
 
 # Host-specific home deltas only; everything shared lives in
 # ../../modules/home/common.nix and the session module.
 {
   xdg.configFile."wallpapers/bg.png".source = ../../../pics/2077.png;
-
-  home.packages = [
-    pkgs.pi-coding-agent
-  ];
 }

@@ -23,6 +23,7 @@
     dysk
     brave
     librewolf
+    pi-coding-agent
   ];
 
   fonts.fontconfig.enable = true;
