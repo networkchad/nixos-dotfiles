@@ -35,6 +35,7 @@
     dysk
     brave
     librewolf
+    pi-coding-agent
   ];
 
   programs = {
