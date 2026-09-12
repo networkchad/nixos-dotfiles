@@ -1,69 +1,102 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 
-# Renders the host's vars into what a session consumes: the wallpaper symlink,
-# layout.xrandrArgs (used by dwm) and layout.waylandScript (used by dwl).
+# The machine facts a session must not hardcode: the wallpaper, and which
+# connectors exist, at what mode, in what order. hosts/<name>/home.nix declares
+# them; this renders the `layout.xrandrArgs` the session runs and links the
+# wallpaper.
+let
+  inherit (lib) mkOption types;
+
+  output = types.submodule {
+    options = {
+      mode = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "Mode such as 2560x1440; null keeps the preferred mode.";
+      };
+
+      rate = mkOption {
+        type = types.nullOr types.number;
+        default = null;
+        description = "Refresh rate in Hz.";
+      };
+
+      primary = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Primary output.";
+      };
+
+      rightOf = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "Place right of this output.";
+      };
+
+      order = mkOption {
+        type = types.ints.unsigned;
+        default = 0;
+        description = ''
+          Rendering order, lowest first. xrandr applies outputs sequentially, so
+          an output using rightOf must come after the one it names.
+        '';
+      };
+    };
+  };
+in
 {
-  imports = [ ./options.nix ];
+  options = {
+    vars.wallpaper = mkOption {
+      type = types.path;
+      example = ../../pics/2077.png;
+      description = "Image linked at ~/.config/wallpapers/bg.png and set by feh.";
+    };
+
+    vars.outputs = mkOption {
+      type = types.attrsOf output;
+      default = { };
+      description = "Monitor layout, keyed by connector name (eDP-1, HDMI-0, ...).";
+    };
+
+    # Derived from vars.outputs; read by modules/home/desktop.nix.
+    layout.xrandrArgs = mkOption {
+      type = types.str;
+      internal = true;
+      default = "";
+      description = "xrandr arguments for vars.outputs.";
+    };
+  };
 
   config =
     let
-      inherit (builtins) filter isNull sort;
+      inherit (builtins) isNull sort;
       inherit (lib) concatStringsSep mapAttrsToList optionalString;
 
+      # Attribute order is alphabetical and meaningless for a physical layout, so
+      # render by the host's `order` (name breaks ties): xrandr resolves
+      # --right-of only against an output it has already seen.
       sorted =
-        # Attribute order is alphabetical and meaningless for a physical layout,
-        # so render by the host's `order` (name breaks ties): xrandr resolves
-        # --right-of only against an output it has already seen.
-        sort (
-          a: b:
-          [
-            a.order
-            a.name
-          ] < [
-            b.order
-            b.name
-          ]
-        ) (mapAttrsToList (name: o: { inherit name; } // o) config.vars.outputs);
+        sort
+          (a: b: [ a.order a.name ] < [ b.order b.name ])
+          (mapAttrsToList (name: o: { inherit name; } // o) config.vars.outputs);
 
-      withRate = e: !isNull e.rate;
-      hz = e: toString e.rate;
+      # --rate only means something next to a mode; --auto takes the preferred one.
+      modeArg =
+        e:
+        "--mode ${e.mode}" + optionalString (!isNull e.rate) " --rate ${toString e.rate}";
 
       xrandrOutput =
         e:
         "--output ${e.name} "
-        + (
-          if isNull e.mode then
-            "--auto"
-          else
-            "--mode ${e.mode}${optionalString (withRate e) " --rate ${hz e}"}"
-        )
+        + (if isNull e.mode then "--auto" else modeArg e)
         + optionalString e.primary " --primary"
         + optionalString (!isNull e.rightOf) " --right-of ${e.rightOf}";
-
-      # wlr-randr has no --auto equivalent, so outputs without a mode are skipped.
-      modeOutputs = filter (e: !isNull e.mode) sorted;
-      wlrOutput =
-        e: ''wlr-randr --output ${e.name} --mode "${e.mode}${optionalString (withRate e) "@${hz e}Hz"}"'';
     in
     {
+      # Empty for a machine with only its built-in panel: X already uses the
+      # panel's preferred mode.
       layout.xrandrArgs = concatStringsSep " " (map xrandrOutput sorted);
 
-      # Empty means "nothing to pin", e.g. a laptop with one panel.
-      layout.waylandScript = lib.mkIf (modeOutputs != [ ]) ''
-        #!${pkgs.bash}/bin/sh
-        # Generated from vars.outputs by modules/home/display.nix; run by dwl's
-        # autostart (src/dwl/config.def.h).
-        command -v wlr-randr >/dev/null 2>&1 || exit 0
-        ${concatStringsSep "\n" (map wlrOutput modeOutputs)}
-      '';
-
-      xdg.configFile."wallpapers/bg.png" = lib.mkIf (!isNull config.vars.wallpaper) {
-        source = config.vars.wallpaper;
-      };
+      xdg.configFile."wallpapers/bg.png".source = config.vars.wallpaper;
     };
 }

@@ -1,6 +1,6 @@
 { config, lib, ... }:
 
-# One XKB layout feeding both X11 and Wayland; the host declares which one.
+# The host declares its layout; the X server is the only thing that needs it.
 {
   options.vars.keyboard = lib.mkOption {
     type = lib.types.str;
@@ -8,8 +8,5 @@
     description = "XKB layout name.";
   };
 
-  config = {
-    environment.sessionVariables.XKB_DEFAULT_LAYOUT = config.vars.keyboard;
-    services.xserver.xkb.layout = config.vars.keyboard;
-  };
+  config.services.xserver.xkb.layout = config.vars.keyboard;
 }

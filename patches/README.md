@@ -11,9 +11,6 @@ invalidate a derivation and trigger a WM rebuild.
 
 | file | upstream base | status | where it lives in the fork |
 | --- | --- | --- | --- |
-| `dwl/bar.patch` | 0.8 | applied | `src/dwl/dwl.c` (`bar_init`, `updatebar`) — this is what lets `slstatus -s \| dwl` feed a bar |
-| `dwl/gaps.patch` | 0.8 | applied | `src/dwl/dwl.c`, `src/dwl/config.def.h` (`gaps`) |
-| `dwl/autostart.patch` | 0.8 | applied | `src/dwl/dwl.c` (`autostartexec`), `config.def.h` (`autostart[]`) |
 | `dwm/uselessgap.diff` | 6.6 | applied | `src/dwm/dwm.c` (`gappx`), `config.def.h` (`gappx = 6`) |
 | `st/alpha.diff` | 0.9.2 | applied | `src/st/x.c`, `src/st/config.def.h` (`float alpha = 0.7`) |
 | `st/scrollback.diff` | 0.9.2 | applied | `src/st/st.c` (`HISTSIZE`, `kscrollup/kscrolldown`), `st.h`, `config.def.h` (Shift+PageUp/Down, Ctrl+wheel) |

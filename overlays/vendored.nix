@@ -6,31 +6,23 @@
 # output; without it a fork is name-identical to upstream.
 final: prev:
 let
-  inherit (final.lib) cleanSource;
+  # prev, not final: forcing final.lib from inside an overlay recurses.
+  inherit (prev.lib) cleanSource genAttrs;
   vendorSrc = ../src;
-
-  fork =
-    name: extra:
-    prev.${name}.overrideAttrs (
-      old:
-      {
-        version = "${old.version}-local";
-        src = cleanSource (vendorSrc + /${name});
-        patches = [ ];
-      }
-      // extra old
-    );
 in
-{
-  dwl = fork "dwl" (old: {
-    buildInputs = (old.buildInputs or [ ]) ++ [
-      final.fcft
-      final.libdrm
-    ];
-  });
-
-  dwm = fork "dwm" (_: { });
-  st = fork "st" (_: { });
-  slstatus = fork "slstatus" (_: { });
-  slock = fork "slock" (_: { });
-}
+genAttrs [
+  "dwm"
+  "st"
+  "slstatus"
+  "slock"
+] (
+  name:
+  prev.${name}.overrideAttrs (
+    old:
+    {
+      version = "${old.version}-local";
+      src = cleanSource (vendorSrc + /${name});
+      patches = [ ];
+    }
+  )
+)

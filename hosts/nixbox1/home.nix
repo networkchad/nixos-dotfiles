@@ -1,6 +1,7 @@
 { ... }:
 
-# What is plugged into this machine; sessions read it through display.nix.
+# What is plugged into this machine; modules/home/display.nix turns it into the
+# session's xrandr line. Connector names are the ones `xrandr -q` prints here.
 {
   vars.wallpaper = ../../pics/2077.png;
 

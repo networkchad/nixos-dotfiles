@@ -1,14 +1,15 @@
 { pkgs, ... }:
 
-# Home config shared by every host and session. Identity (home.username,
-# home.homeDirectory) comes from the host table via lib/make-system.nix.
+# What every machine uses, session aside. Identity (home.username,
+# home.homeDirectory) comes from the host table via lib/make-system.nix; the
+# desktop lives in ./desktop.nix and per-host facts in hosts/<name>/home.nix.
 {
   imports = [ ./display.nix ];
 
   home.stateVersion = "26.05";
 
   home.packages = with pkgs; [
-    # Both sessions type Japanese through fcitx5, so CJK fonts are shared.
+    # fcitx5 types Japanese here, so CJK fonts are not optional.
     noto-fonts
     noto-fonts-cjk-sans
     noto-fonts-color-emoji
@@ -28,7 +29,7 @@
 
   fonts.fontconfig.enable = true;
 
-  # Both sessions run slstatus.
+  # slstatus reads its bar segments from here (src/slstatus/config.def.h).
   xdg.configFile."slstatus/scripts" = {
     source = ../../src/slstatus/scripts;
     recursive = true;

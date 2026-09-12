@@ -1,32 +1,20 @@
 # One host table entry -> one nixosSystem.
 { nixpkgs, home-manager }:
+hostName: { system, users }:
 let
   inherit (nixpkgs) lib;
-  sessions = import ../modules/sessions.nix;
-in
-hostName: host:
-let
-  # A typo in the host table should fail loudly, not import nothing.
-  session =
-    if lib.hasAttr host.session sessions then
-      sessions.${host.session}
-    else
-      throw "host '${hostName}': unknown session '${host.session}' (available: ${lib.concatStringsSep ", " (lib.attrNames sessions)})";
-
-  inherit (host) users;
 in
 lib.nixosSystem {
-  inherit (host) system;
+  inherit system;
 
   # Visible to every system module (users.nix, network.nix, docker.nix, qemu.nix).
   specialArgs = { inherit hostName users; };
 
   modules = [
-    # Must come before any module that mentions pkgs.dwl & friends.
+    # Must come before any module that mentions pkgs.dwm & friends.
     { nixpkgs.overlays = [ (import ../overlays/vendored.nix) ]; }
 
     ../hosts/common.nix
-    session.system
     ../hosts/${hostName}/configuration.nix
 
     home-manager.nixosModules.home-manager
@@ -41,7 +29,7 @@ lib.nixosSystem {
           home.homeDirectory = "/home/${username}";
           imports = [
             ../modules/home/common.nix
-            session.home
+            ../modules/home/desktop.nix
             ../hosts/${hostName}/home.nix
           ];
         });

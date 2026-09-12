@@ -17,7 +17,8 @@
       LC_TIME = "en_US.UTF-8";
     };
 
-    # Both sessions type Japanese, so fcitx5 is shared rather than per-session.
+    # Typed through fcitx5 on both machines, so it is system-wide rather than
+    # part of the session.
     inputMethod = {
       enable = true;
       type = "fcitx5";

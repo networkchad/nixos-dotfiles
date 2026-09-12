@@ -9,6 +9,7 @@
     ../modules/nixos/base/i18n.nix
     ../modules/nixos/base/network.nix
     ../modules/nixos/base/sound.nix
+    ../modules/nixos/desktop.nix
     ../modules/nixos/services/docker.nix
     ../modules/nixos/services/tailscale.nix
   ];

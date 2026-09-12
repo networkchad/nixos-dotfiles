@@ -1,4 +1,4 @@
-{ config, ... }:
+{ ... }:
 
 # Host deltas only; everything shared lives in ../common.nix.
 {

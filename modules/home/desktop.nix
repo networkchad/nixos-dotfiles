@@ -1,33 +1,28 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, pkgs, ... }:
 
-# Home side of the dwm (X11) session. Monitors and wallpaper come from the
-# host's vars; see modules/home/display.nix.
+# The desktop, user half: the X-only tools and what the session starts.
+# Monitors and wallpaper come from hosts/<name>/home.nix through
+# modules/home/display.nix.
 {
+  imports = [ ./display.nix ];
+
   home.packages = with pkgs; [
-    # Vendored forks (overlays/vendored.nix). dwm itself is a system package:
-    # the startx flow needs it on the system PATH.
+    # Vendored forks: overlays/vendored.nix. dwm itself is a system package.
     st
     slstatus
 
+    dmenu
     feh
     flameshot
     xclip
-    arandr
     xss-lock
-    dmenu
+    arandr
   ];
 
   programs.bash = {
     enable = true;
 
-    shellAliases = {
-      copy = "xclip -selection clipboard -i";
-    };
+    shellAliases.copy = "xclip -selection clipboard -i";
 
     profileExtra = ''
       if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
