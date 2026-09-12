@@ -2,13 +2,9 @@
 
 # Host deltas only; everything shared lives in ../common.nix.
 {
-  imports = [
-    ./hardware-configuration.nix
-    ../../modules/nixos/hardware/keyboard.nix
-    ../../modules/nixos/hardware/nvidia.nix
-  ];
+  imports = [ ./hardware-configuration.nix ];
 
-  vars.keyboard = "us";
+  services.xserver.xkb.layout = "us";
 
   vars.nvidia = {
     open = false;

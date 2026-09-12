@@ -1,7 +1,7 @@
 { config, lib, ... }:
 
-# NVIDIA with PRIME offload. The three facts that differ per machine (driver
-# flavour and the two PCI bus ids) are declared by hosts/<name>/configuration.nix.
+# NVIDIA with PRIME offload, imported by hosts/common.nix. What differs per
+# machine -- driver flavour and the two PCI bus ids -- comes from vars.nvidia.
 let
   cfg = config.vars.nvidia;
 in
@@ -27,26 +27,26 @@ in
   };
 
   config = {
-    hardware = {
-      graphics.enable = true;
-
-      nvidia = {
-        inherit (cfg) open package;
-        modesetting.enable = true;
-        powerManagement = {
+    # hardware.graphics is mkDefault'd by the X server, so it is not set here.
+    hardware.nvidia = {
+      inherit (cfg) open package;
+      modesetting.enable = true;
+      powerManagement = {
+        enable = true;
+        finegrained = true;
+      };
+      nvidiaSettings = true;
+      prime = {
+        offload = {
           enable = true;
-          finegrained = true;
+          enableOffloadCmd = true;
         };
-        nvidiaSettings = true;
-        prime = {
-          offload = {
-            enable = true;
-            enableOffloadCmd = true;
-          };
-          inherit (cfg) intelBusId nvidiaBusId;
-        };
+        inherit (cfg) intelBusId nvidiaBusId;
       };
     };
+
+    # Here rather than with docker, so the docker config works on a GPU-less host.
+    hardware.nvidia-container-toolkit.enable = true;
 
     services.xserver.videoDrivers = [ "nvidia" ];
   };

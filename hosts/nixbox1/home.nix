@@ -1,20 +1,11 @@
 { ... }:
 
-# What is plugged into this machine; modules/home/display.nix turns it into the
-# session's xrandr line. Connector names are the ones `xrandr -q` prints here.
+# What is plugged into this machine: connector names as `xrandr -q` prints them,
+# in the order xrandr must apply them.
 {
   vars.wallpaper = ../../pics/2077.png;
 
-  vars.outputs = {
-    eDP-1 = {
-      primary = true;
-      order = 10;
-    };
-    HDMI-1-0 = {
-      mode = "2560x1440";
-      rate = 144;
-      rightOf = "eDP-1";
-      order = 20;
-    };
-  };
+  vars.xrandrArgs =
+    "--output eDP-1 --auto --primary "
+    + "--output HDMI-1-0 --mode 2560x1440 --rate 144 --right-of eDP-1";
 }
