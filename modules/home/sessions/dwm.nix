@@ -1,12 +1,19 @@
-{ pkgs, ... }:
-
 {
-  imports = [
-    ../packages/st.nix
-    ../packages/slstatus.nix
-  ];
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
+# Home side of the dwm (X11) session. Monitors and wallpaper come from the
+# host's vars; see modules/home/display.nix.
+{
   home.packages = with pkgs; [
+    # Vendored forks (overlays/vendored.nix). dwm itself is a system package:
+    # the startx flow needs it on the system PATH.
+    st
+    slstatus
+
     feh
     flameshot
     xclip
@@ -15,19 +22,13 @@
     dmenu
   ];
 
-  programs.yazi.settings.opener.image_viewer = [
-    {
-      run = "${pkgs.feh}/bin/feh --start-at \"$1\" .";
-      desc = "View Image Directory";
-    }
-  ];
-
   programs.bash = {
     enable = true;
 
     shellAliases = {
       copy = "xclip -selection clipboard -i";
     };
+
     profileExtra = ''
       if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
         exec startx "$HOME/.xsession"
@@ -37,12 +38,12 @@
 
   xsession = {
     enable = true;
-    
+
     initExtra = ''
       fcitx5 -d &
       slstatus &
-      xrandr --output eDP-1 --auto --primary --output HDMI-1-0 --mode 2560x1440 --rate 144 --right-of eDP-1 &
-      feh --bg-fill $HOME/.config/wallpapers/bg.png &
+      ${lib.optionalString (config.layout.xrandrArgs != "") "xrandr ${config.layout.xrandrArgs} &"}
+      feh --bg-fill "$HOME/.config/wallpapers/bg.png" &
       xset s 300
       xss-lock -- slock &
       exec dwm

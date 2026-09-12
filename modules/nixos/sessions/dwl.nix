@@ -1,11 +1,8 @@
-{ ... }:
-
-# System side of the dwl (Wayland) session.
-# Note: idle/sleep locking is done by the `swayidle ... swaylock -fF` line in
-# dwl's autostart (src/dwl/config.def.h); nixpkgs ships no swayidle module.
-# The `swayidle` binary itself comes from the home session package list.
 {
-  imports = [
-    ../wayland.nix
-  ];
+  # System side of the dwl (Wayland) session.
+  #
+  # Locking is the `swayidle ... swaylock -fF` entry in dwl's autostart, and
+  # monitor layout comes from the host's vars.outputs as
+  # ~/.config/session/display.sh, which that same autostart runs.
+  imports = [ ../desktop/wayland.nix ];
 }

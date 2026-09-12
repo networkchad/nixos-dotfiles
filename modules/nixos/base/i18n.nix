@@ -1,7 +1,6 @@
 { pkgs, ... }:
 
 {
-  # --- Time Zone & Localization ---
   time.timeZone = "Asia/Taipei";
 
   i18n = {
@@ -17,8 +16,8 @@
       LC_TELEPHONE = "en_US.UTF-8";
       LC_TIME = "en_US.UTF-8";
     };
-    
-    # Language Input Method Engine (IME)
+
+    # Both sessions type Japanese, so fcitx5 is shared rather than per-session.
     inputMethod = {
       enable = true;
       type = "fcitx5";

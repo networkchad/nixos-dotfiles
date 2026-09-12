@@ -1,13 +1,19 @@
-{ ... }:
+{ config, ... }:
 
-# Host-specific deltas only; everything shared lives in ../common.nix.
+# Host deltas only; everything shared lives in ../common.nix.
 {
   imports = [
     ./hardware-configuration.nix
-    ../../modules/nixos/nvidia-open.nix
-    ../../modules/nixos/keyboard-jp.nix
-    ../../modules/nixos/qemu.nix
+    ../../modules/nixos/hardware/keyboard.nix
+    ../../modules/nixos/hardware/nvidia.nix
+    ../../modules/nixos/services/qemu.nix
   ];
 
-  users.users.anon.extraGroups = [ "libvirtd" ];
+  vars.keyboard = "jp";
+
+  vars.nvidia = {
+    open = true;
+    intelBusId = "PCI:0:2:0";
+    nvidiaBusId = "PCI:1:0:0";
+  };
 }
