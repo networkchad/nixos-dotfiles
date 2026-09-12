@@ -14,6 +14,33 @@
 
   networking.hostName = hostName;
 
+  # The local forks of ../src, defined once so no module repeats an
+  # overrideAttrs: dwm and slock are used here, st and slstatus in
+  # ../modules/home.nix, and an overlay is the only thing both halves see.
+  # Their patches are carried in the source (provenance: ../patches/README.md),
+  # so upstream's `patches` are dropped -- they would apply to code already
+  # modified by hand. The `-local` version suffix keeps a fork rebuild visible
+  # in nixos-rebuild output.
+  nixpkgs.overlays = [
+    (
+      final: prev:
+      lib.genAttrs [
+        "dwm"
+        "st"
+        "slstatus"
+        "slock"
+      ]
+        (
+          name:
+          prev.${name}.overrideAttrs (old: {
+            version = "${old.version}-local";
+            src = lib.cleanSource (../src + /${name});
+            patches = [ ];
+          })
+        )
+    )
+  ];
+
   boot.loader = {
     systemd-boot.enable = true;
     efi.canTouchEfiVariables = true;

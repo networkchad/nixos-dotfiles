@@ -1,7 +1,8 @@
 # Patch provenance
 
 The forks in `../src` carry these changes **in the source itself** — the
-build never applies them (`overlays/vendored.nix` sets `patches = [ ]` so
+build never applies them (the overlay in `../hosts/common.nix` sets
+`patches = [ ]` so
 upstream's patch list cannot be applied on top of hand-modified code).
 
 Kept here for two reasons: they document where each local change came from,

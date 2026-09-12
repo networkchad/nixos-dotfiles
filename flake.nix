@@ -8,14 +8,16 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  # The host table: the only place a hostname, architecture or username appears.
-  # Each entry needs ./hosts/<name>/{configuration,home,hardware-configuration}.nix;
-  # a missing file or key fails evaluation rather than importing nothing.
+  # The host table and the nixosSystem factory; no config here.
   outputs =
     { nixpkgs, home-manager, ... }:
     let
       inherit (nixpkgs) lib;
 
+      # The host table: the only place a hostname, architecture or username
+      # appears. Each entry needs
+      # ./hosts/<name>/{configuration,home,hardware-configuration}.nix; a missing
+      # file or key fails evaluation rather than importing nothing.
       hosts = {
         nixbox1 = {
           system = "x86_64-linux";
@@ -38,9 +40,6 @@
           specialArgs = { inherit hostName users; };
 
           modules = [
-            # Must come before any module that mentions pkgs.dwm & friends.
-            { nixpkgs.overlays = [ (import ./overlays/vendored.nix) ]; }
-
             ./hosts/common.nix
             ./hosts/${hostName}/configuration.nix
 
