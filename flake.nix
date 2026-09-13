@@ -54,7 +54,8 @@
                   home.username = username;
                   home.homeDirectory = "/home/${username}";
                   imports = [
-                    ./modules/home.nix
+                    # Shared user profile first, then this machine's facts.
+                    ./hosts/home.nix
                     ./hosts/${hostName}/home.nix
                   ];
                 });

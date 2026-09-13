@@ -5,9 +5,9 @@
   ...
 }:
 
-# The user half: apps, shell, and what the session starts. Identity comes from
-# the host table in ../flake.nix; the two options below come from
-# hosts/<name>/home.nix.
+# The user half, shared by every host: apps, shell, and what the session
+# starts. Identity comes from the host table in ../flake.nix; the two options
+# below are filled in by ./<name>/home.nix.
 {
   options.vars = {
     wallpaper = lib.mkOption {
@@ -48,7 +48,7 @@
       librewolf
       pi-coding-agent
 
-      # Vendored forks (overlay in ../hosts/common.nix); dwm is a system package.
+      # Vendored forks (overlay in ./common.nix); dwm is a system package.
       st
       slstatus
 

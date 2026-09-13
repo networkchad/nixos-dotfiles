@@ -7,20 +7,17 @@
   ...
 }:
 
-# Shared by every host; per-host deltas live in ./<name>/. ../modules/nvidia.nix
-# is the one import here, because it needs facts only a host can give.
+# Shared by every host; per-host deltas -- hardware, keymap, GPU, VMs -- live
+# in ./<name>/. The user half of the desktop lives in ./home.nix.
 {
-  imports = [ ../modules/nvidia.nix ];
-
   networking.hostName = hostName;
 
   # The local forks of ../src, defined once so no module repeats an
-  # overrideAttrs: dwm and slock are used here, st and slstatus in
-  # ../modules/home.nix, and an overlay is the only thing both halves see.
-  # Their patches are carried in the source (provenance: ../patches/README.md),
-  # so upstream's `patches` are dropped -- they would apply to code already
-  # modified by hand. The `-local` version suffix keeps a fork rebuild visible
-  # in nixos-rebuild output.
+  # overrideAttrs: dwm and slock are used here, st and slstatus in ./home.nix,
+  # and an overlay is the only thing both halves see. Their patches are carried
+  # in the source (provenance: ../patches/README.md), so upstream's `patches`
+  # are dropped -- they would apply to code already modified by hand. The
+  # `-local` version suffix keeps a fork rebuild visible in nixos-rebuild output.
   nixpkgs.overlays = [
     (
       final: prev:
@@ -104,7 +101,7 @@
   services.pipewire.alsa.support32Bit = true;
 
   # Desktop, system half: X on tty1, dwm, picom, slock. The user half is
-  # ../modules/home.nix.
+  # ./home.nix.
   services.xserver = {
     enable = true;
     autoRepeatDelay = 200;
@@ -124,8 +121,8 @@
 
   programs.slock.enable = true; # pkgs.slock is the vendored fork
 
-  # GPU access for containers is set by nvidia.nix, so this stays valid on a
-  # machine without one.
+  # Docker needs no GPU; each host that has one enables
+  # hardware.nvidia-container-toolkit next to its NVIDIA block.
   virtualisation.docker.enable = true;
 
   services.tailscale.enable = true;

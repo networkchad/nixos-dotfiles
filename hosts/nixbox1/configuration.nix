@@ -11,11 +11,34 @@
 
   services.xserver.xkb.layout = "jp";
 
-  vars.nvidia = {
+  # NVIDIA with PRIME offload: the iGPU drives the session and
+  # `nvidia-offload <cmd>` puts one program on the dGPU. Both bus ids are this
+  # machine's PCI addresses (`xrandr --listproviders`, or lspci).
+  # hardware.graphics is left alone: the X server already mkDefaults it.
+  hardware.nvidia = {
+    # Open kernel modules: right for this GPU (Turing and newer). The driver
+    # generation is the kernel package's default, nvidiaPackages.stable.
     open = true;
-    intelBusId = "PCI:0:2:0";
-    nvidiaBusId = "PCI:1:0:0";
+    modesetting.enable = true;
+    powerManagement = {
+      enable = true;
+      finegrained = true;
+    };
+    nvidiaSettings = true;
+    prime = {
+      offload = {
+        enable = true;
+        enableOffloadCmd = true;
+      };
+      intelBusId = "PCI:0:2:0";
+      nvidiaBusId = "PCI:1:0:0";
+    };
   };
+
+  # Lets the containers docker starts (../common.nix) reach the GPU.
+  hardware.nvidia-container-toolkit.enable = true;
+
+  services.xserver.videoDrivers = [ "nvidia" ];
 
   # VM stack, this machine only.
   virtualisation.libvirtd = {
