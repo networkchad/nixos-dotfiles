@@ -48,7 +48,7 @@
       librewolf
       pi-coding-agent
 
-      # Vendored forks (overlay in ./common.nix); dwm is a system package.
+      # Vendored forks (overlay in ./common-configuration.nix); dwm is a system package.
       st
       slstatus
 

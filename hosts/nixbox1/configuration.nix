@@ -5,7 +5,7 @@
   ...
 }:
 
-# Host deltas only; everything shared lives in ../common.nix.
+# Host deltas only; everything shared lives in ../common-configuration.nix.
 {
   imports = [ ./hardware-configuration.nix ];
 
@@ -35,7 +35,7 @@
     };
   };
 
-  # Lets the containers docker starts (../common.nix) reach the GPU.
+  # Lets the containers docker starts (../common-configuration.nix) reach the GPU.
   hardware.nvidia-container-toolkit.enable = true;
 
   services.xserver.videoDrivers = [ "nvidia" ];

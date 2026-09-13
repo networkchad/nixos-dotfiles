@@ -40,7 +40,7 @@
           specialArgs = { inherit hostName users; };
 
           modules = [
-            ./hosts/common.nix
+            ./hosts/common-configuration.nix
             ./hosts/${hostName}/configuration.nix
 
             home-manager.nixosModules.home-manager
@@ -55,7 +55,7 @@
                   home.homeDirectory = "/home/${username}";
                   imports = [
                     # Shared user profile first, then this machine's facts.
-                    ./hosts/home.nix
+                    ./hosts/common-home.nix
                     ./hosts/${hostName}/home.nix
                   ];
                 });

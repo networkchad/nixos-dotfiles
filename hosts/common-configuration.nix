@@ -8,12 +8,12 @@
 }:
 
 # Shared by every host; per-host deltas -- hardware, keymap, GPU, VMs -- live
-# in ./<name>/. The user half of the desktop lives in ./home.nix.
+# in ./<name>/. The user half of the desktop lives in ./common-home.nix.
 {
   networking.hostName = hostName;
 
   # The local forks of ../src, defined once so no module repeats an
-  # overrideAttrs: dwm and slock are used here, st and slstatus in ./home.nix,
+  # overrideAttrs: dwm and slock are used here, st and slstatus in ./common-home.nix,
   # and an overlay is the only thing both halves see. Their patches are carried
   # in the source (provenance: ../patches/README.md), so upstream's `patches`
   # are dropped -- they would apply to code already modified by hand. The
@@ -101,7 +101,7 @@
   services.pipewire.alsa.support32Bit = true;
 
   # Desktop, system half: X on tty1, dwm, picom, slock. The user half is
-  # ./home.nix.
+  # ./common-home.nix.
   services.xserver = {
     enable = true;
     autoRepeatDelay = 200;
