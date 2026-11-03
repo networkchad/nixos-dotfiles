@@ -1,5 +1,11 @@
 /* See LICENSE file for copyright and license details. */
 
+/* The XF86 media keysyms for the volume/brightness bindings at the bottom of
+ * keys[]. dwm.c includes <X11/keysym.h> only (dwm.c:34) and includes this file
+ * as config.h at dwm.c:271, so the extra header belongs here rather than in
+ * dwm.c -- one less touched file. */
+#include <X11/XF86keysym.h>
+
 /* appearance */
 static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int gappx     = 6;        /* gaps between windows */
@@ -69,6 +75,18 @@ static const char *librewolfcmd[] = { "librewolf", "--private-window", NULL};
 static const char *bravecmd[] = { "brave", "--incognito", NULL};
 static const char *termcmd[]  = { "st", NULL };
 
+/* Mixer and backlight, driven by the XF86 keys at the bottom of keys[]. `-q`
+ * keeps amixer as silent as the mute binding already is. brightnessctl writes
+ * /sys/class/backlight/<name>, and needs no setuid wrapper and no group: the
+ * device carries the seat tag (verified on nixbox1 --
+ * ID_FOR_SEAT=backlight-pci-0000_00_02_0, TAGS=:seat:systemd:) and logind's
+ * uaccess ACL gives the active tty1 session write access to it. If X ever runs
+ * on a VT that is not the active seat, the fix is a udev rule, not a chmod. */
+static const char *volupcmd[]   = { "amixer", "-q", "set", "Master", "5%+", NULL };
+static const char *voldowncmd[] = { "amixer", "-q", "set", "Master", "5%-", NULL };
+static const char *brupcmd[]    = { "brightnessctl", "set", "5%+", NULL };
+static const char *brdowncmd[]  = { "brightnessctl", "set", "5%-", NULL };
+
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
@@ -111,6 +129,13 @@ static const Key keys[] = {
 	{ Mod4Mask,                     XK_s,                      spawn,          {.v = screenshotcmd } },
 	{ Mod4Mask,                     XK_m,                      spawn,          {.v = mutecmd } },
 	{ Mod4Mask,                     XK_l,                      spawn,          {.v = slockcmd } },
+
+	/* Hardware keys, no modifier: they arrive as their own keysyms, so these
+	 * cannot shadow anything on either keymap (JP on nixbox1, US on nixbox2). */
+	{ 0,                            XF86XK_AudioRaiseVolume,   spawn,          {.v = volupcmd } },
+	{ 0,                            XF86XK_AudioLowerVolume,   spawn,          {.v = voldowncmd } },
+	{ 0,                            XF86XK_MonBrightnessUp,    spawn,          {.v = brupcmd } },
+	{ 0,                            XF86XK_MonBrightnessDown,  spawn,          {.v = brdowncmd } },
 
 };
 

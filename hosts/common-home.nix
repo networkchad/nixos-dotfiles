@@ -39,7 +39,8 @@
       mpv
       fastfetch
       keepassxc
-      alsa-utils
+      alsa-utils # amixer: dwm's mute/volume keys
+      brightnessctl # /sys/class/backlight: dwm's brightness keys
       uv
       devenv
       dysk
