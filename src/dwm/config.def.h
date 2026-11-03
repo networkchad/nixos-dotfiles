@@ -14,9 +14,10 @@ static const char col_gray3[]       = "#5b5b5b";
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_gray2, col_gray1, col_gray2 },
-	[SchemeSel]  = { col_gray2, col_gray1, col_gray2 },
+	/* Must differ from SchemeNorm: this is the only thing that says which tag
+	 * is visible and which window is focused. */
+	[SchemeSel]  = { col_gray2, col_gray3, col_gray3 },
 };
-
 
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
@@ -27,8 +28,11 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	/* Upstream shipped Gimp/Firefox rules here; neither is installed, so they
+	 * matched nothing. A rule with all-NULL selectors matches everything and
+	 * asserts nothing -- keep one so the array is never empty (applyrules
+	 * iterates LENGTH(rules)). */
+	{ NULL,         NULL,       NULL,     0,            0,           -1 },
 };
 
 /* layout(s) */
