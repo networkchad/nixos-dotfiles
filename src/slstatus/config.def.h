@@ -72,7 +72,7 @@ static const struct arg args[] = {
     { ram_perc,       " | RAM:%s%%", NULL },
     { run_command,    " | VPN:%s",   "sh -c $HOME/.config/slstatus/scripts/vpn.sh" },
     { run_command,    " | Net:%s",   "sh -c $HOME/.config/slstatus/scripts/internet.sh" },
-    { battery_perc,   " | B:%s%%",   "BAT0" },
+    { run_command,    "%s",          "sh -c $HOME/.config/slstatus/scripts/battery.sh" },
     { run_command,    " | Vol:%s",   "sh -c $HOME/.config/slstatus/scripts/volume.sh" },
     { datetime,       " | %s",       "%Y-%m-%d %H:%M" },
 };
