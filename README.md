@@ -40,10 +40,12 @@ vars.xrandrArgs =
   + "--output HDMI-1-0 --mode 2560x1440 --rate 144 --right-of eDP-1";
 ```
 
-The GPU needs no `vars`: the shared `hosts/nvidia.nix` holds the offload setup
-and a host adds only its driver generation (`open = true` on nixbox1,
-`legacy_580` on nixbox2). The flake passes `hostName` and `users` to every module
-as `specialArgs`, so no module names a user or a machine.
+The GPU splits the same way: `hosts/nvidia.nix` holds the offload shape and
+*declares* `video.prime.intelBusId` / `video.prime.nvidiaBusId` with no default,
+so every host states its own PCI ids plus its driver generation (`open = true`
+on nixbox1, `legacy_580` on nixbox2) instead of inheriting ids that happen to be
+right twice. The flake passes `hostName` and `users` to every module as
+`specialArgs`, so no module names a user or a machine.
 
 ## Hosts
 
@@ -55,7 +57,8 @@ as `specialArgs`, so no module names a user or a machine.
 Adding a host: drop `hardware-configuration.nix` (from `nixos-generate-config`
 on the box) plus a `configuration.nix` and `home.nix` under `hosts/<name>/`, then
 add the entry to the host table. A missing file or key fails evaluation instead
-of silently importing nothing.
+of silently importing nothing -- including the required ones: `vars.wallpaper`,
+and `video.prime.*` on an NVIDIA host.
 
 ## Vendored forks
 
@@ -63,19 +66,25 @@ of silently importing nothing.
 the overlay in `hosts/common-configuration.nix` -- the one module both the system
 (dwm, slock) and the home (st, slstatus) half see.
 
-* `patches = [ ]` — upstream's patch list is dropped: the local changes are in
-  the source, and upstream's would apply to code already modified by hand
-  (provenance: `patches/README.md`).
+* `patches = [ ]` — upstream's patch list is dropped: the hunks are already in
+  the source, and upstream's list applies to the release tarball these trees were
+  forked from. `patches/README.md` pins each fork's upstream base commit, lists
+  what is genuinely local, and flags the upstream code that only *looks* local
+  (dwm's `refreshrate`, its status-click fix, slock's ctrl-U).
 * `version` comes from `src/<pkg>/config.mk`, the tree that actually compiles,
   with a `-local` suffix so a fork rebuild is visible in `nixos-rebuild` output
   (`dwm-6.8-local`) instead of being name-identical to upstream. Inheriting
   nixpkgs' version would drift silently (`../src/dwm` is 6.8, nixpkgs packages
   6.6).
-* `lib.cleanSource` — editing docs or patch notes next to the source cannot
-  invalidate the derivation.
+* the source is filtered down to what the Makefile reads (`.c`, `.h`, `Makefile`,
+  `config.mk`, `config.def.h`, the man page it installs, st's terminfo), so
+  editing a doc or a patch note next to the source cannot rebuild a fork. Checked
+  rather than assumed: appending to `src/st/FAQ` leaves `st`'s derivation path
+  byte-identical. `src/slstatus/scripts/` is runtime config the session links,
+  deliberately not a build input.
 
-Rebasing a fork: copy the new release over `src/<pkg>`, re-apply the entries in
-`patches/<pkg>/`, keep the local `config.def.h`.
+Rebasing a fork is a recipe with commands, not a paragraph: see *Rebasing a fork
+onto newer upstream* in `patches/README.md`.
 
 ## Commands
 
@@ -88,6 +97,7 @@ nixos-rebuild switch --flake .#nixbox1 next   # + set as default boot entry
 nixos-rebuild reboot --flake .#nixbox1 next   # switch + reboot
 nixos-rebuild dry-activate --flake .#nixbox1  # preview changes, touch nothing
 nix eval ".#nixosConfigurations.nixbox2.config.system.build.toplevel.drvPath"  # check the other box
+nix fmt                                       # nixfmt, pinned by this lock
 ```
 
 Build fails → `--show-trace`. Bad switch → `sudo nixos-rebuild --rollback` (or
@@ -95,5 +105,6 @@ the previous systemd-boot entry).
 
 `nix.gc` runs weekly with 14-day retention; by hand: `sudo nix-collect-garbage -d`.
 
-No CI, no linters, no `devShell`, no formatter output — this repo is only what
-the two machines need.
+No CI, no linters, no `devShell` — this repo is only what the two machines need.
+The one exception is `nix fmt`: the formatter is a flake output, so the tree's
+style is checked by the same nixpkgs that builds it.
