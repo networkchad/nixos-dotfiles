@@ -1,7 +1,6 @@
 { ... }:
 
-# What is plugged into this machine: connector names as `xrandr -q` prints them,
-# in the order xrandr must apply them.
+# Connector names as `xrandr -q` prints them, in the order xrandr must apply them.
 {
   vars.wallpaper = ../../pics/2077.png;
 

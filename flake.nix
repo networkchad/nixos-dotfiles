@@ -15,9 +15,9 @@
       inherit (nixpkgs) lib;
 
       # The host table: the only place a hostname, architecture or username
-      # appears. Each entry needs
-      # ./hosts/<name>/{configuration,home,hardware-configuration}.nix; a missing
-      # file or key fails evaluation rather than importing nothing.
+      # appears. Each entry needs ./hosts/<name>/{configuration,home,
+      # hardware-configuration}.nix; a missing file or key fails evaluation
+      # rather than importing nothing.
       hosts = {
         nixbox1 = {
           system = "x86_64-linux";
@@ -30,22 +30,25 @@
         };
       };
 
-      # One host table entry -> one nixosSystem.
+      # One host table entry -> one nixosSystem. Identity is passed to every
+      # module as specialArgs; the three files under ./hosts/<name> are the
+      # whole configuration.
       mkSystem =
-        hostName: { system, users }:
+        hostName:
+        { system, users }:
         lib.nixosSystem {
           inherit system;
-
-          # Visible to every module; `users` is what creates the accounts.
           specialArgs = { inherit hostName users; };
 
           modules = [
             ./hosts/common-configuration.nix
+            ./hosts/${hostName}/hardware-configuration.nix
             ./hosts/${hostName}/configuration.nix
 
             home-manager.nixosModules.home-manager
             {
-              # Identity comes from the host table, so no home module names a user.
+              # Both halves of the profile are assembled here, so no module names
+              # a user or a machine.
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
@@ -54,7 +57,6 @@
                   home.username = username;
                   home.homeDirectory = "/home/${username}";
                   imports = [
-                    # Shared user profile first, then this machine's facts.
                     ./hosts/common-home.nix
                     ./hosts/${hostName}/home.nix
                   ];

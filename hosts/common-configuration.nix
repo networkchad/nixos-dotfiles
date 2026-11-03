@@ -7,57 +7,40 @@
   ...
 }:
 
-# Shared by every host; per-host deltas -- hardware, keymap, GPU, VMs -- live
-# in ./<name>/. The user half of the desktop lives in ./common-home.nix.
+# Every host; per-host deltas live in ./<name>/, the user half in ./common-home.nix.
 {
   networking.hostName = hostName;
 
-  # The local forks of ../src, defined once so no module repeats an
-  # overrideAttrs: dwm and slock are used here, st and slstatus in ./common-home.nix,
-  # and an overlay is the only thing both halves see. Their patches are carried
-  # in the source (provenance: ../patches/README.md), so upstream's `patches`
-  # are dropped -- they would apply to code already modified by hand.
-  #
-  # A fork's version is read out of the tree that is actually compiled,
-  # src/<name>/config.mk, and never inherited from nixpkgs: `old.version` would
-  # name a source tree this derivation does not contain, and the two drift
-  # independently (../src can move ahead of nixpkgs, or lag behind it).
+  # The ../src forks, defined once where both halves can see them (dwm and slock
+  # here, st and slstatus in ./common-home.nix). Upstream's `patches` are dropped:
+  # the local edits are already in the tree (../patches/README.md). `version` is
+  # read from src/<name>/config.mk because `old.version` would name a tree this
+  # derivation does not build, and `-local` keeps a fork rebuild visible in
+  # nixos-rebuild output.
   nixpkgs.overlays = [
     (
       final: prev:
-      lib.genAttrs [
-        "dwm"
-        "st"
-        "slstatus"
-        "slock"
-      ]
+      lib.genAttrs
+        [
+          "dwm"
+          "st"
+          "slstatus"
+          "slock"
+        ]
         (
           name:
           let
-            # src/<name>/config.mk carries `VERSION = x.y` for its own build.
-            version =
-              let
-                lines = lib.splitString "\n" (builtins.readFile (../src + /${name}/config.mk));
-                line = lib.findFirst (lib.hasPrefix "VERSION") null lines;
-                matched = if line == null then null else builtins.match "VERSION = +(.*)" line;
-              in
-              if matched == null || matched == [ ] then
-                builtins.throw "src/${name}/config.mk has no `VERSION = <version>` line"
-              else
-                lib.trim (lib.head matched);
-
-            # The `-local` suffix keeps a fork rebuild visible in nixos-rebuild
-            # output; the warning next to it says which way ../src drifted.
-            fork = prev.${name}.overrideAttrs (_: {
-              version = "${version}-local";
-              src = lib.cleanSource (../src + /${name});
-              patches = [ ];
-            });
+            lines = lib.splitString "\n" (builtins.readFile (../src + /${name}/config.mk));
+            line =
+              lib.findFirst (lib.hasPrefix "VERSION")
+                (throw "src/${name}/config.mk has no `VERSION = <version>` line")
+                lines;
           in
-          lib.warnIf (
-            prev.${name}.version != version
-          ) "fork ../src/${name} is ${version}, nixpkgs packages ${prev.${name}.pname} ${prev.${name}.version}: the vendored tree is what builds"
-            fork
+          prev.${name}.overrideAttrs (_: {
+            version = "${lib.trim (builtins.head (builtins.match "VERSION = +(.*)" line))}-local";
+            src = lib.cleanSource (../src + /${name});
+            patches = [ ];
+          })
         )
     )
   ];
@@ -83,11 +66,10 @@
     options = "--delete-older-than 14d";
   };
 
-  # Accounts for every name in the host table, with the groups the always-on
-  # features below need. The VM stack adds libvirtd on the host that has it.
+  # Every name in the host table; a host adds a group when it enables something
+  # that needs one (libvirtd on nixbox1).
   users.users = lib.genAttrs users (name: {
     isNormalUser = true;
-    description = name;
     extraGroups = [
       "wheel"
       "networkmanager"
@@ -95,16 +77,12 @@
     ];
   });
 
-  networking = {
-    networkmanager.enable = true;
-    firewall.enable = true;
-  };
+  networking.networkmanager.enable = true;
 
   time.timeZone = "Asia/Taipei";
 
   i18n = {
-    # No extraLocaleSettings: they only matter when a category differs from LANG.
-    defaultLocale = "en_US.UTF-8";
+    defaultLocale = "en_US.UTF-8"; # no extraLocaleSettings: nothing differs from LANG
 
     # Typed through fcitx5 on both machines, so system-wide, not per session.
     inputMethod = {
@@ -117,57 +95,41 @@
     };
   };
 
-  # pipewire (+ pulse/alsa compat) comes from the X server's graphical-desktop
-  # defaults; rtkit does not -- pipewire only reads this flag.
+  # pipewire and its compat layers come from the X server's defaults; rtkit's
+  # realtime flag is read by pipewire but not set by them.
   security.rtkit.enable = true;
+  services.pipewire.alsa.support32Bit = true; # Steam/Wine/old games
 
-  # 32-bit ALSA, for Steam/Wine/old games.
-  services.pipewire.alsa.support32Bit = true;
-
-  # Desktop, system half: X on tty1, dwm, picom, slock. The user half is
-  # ./common-home.nix.
+  # X on tty1, dwm, picom, slock. No display manager: login stays on the tty.
   services.xserver = {
     enable = true;
     autoRepeatDelay = 200;
     autoRepeatInterval = 35;
-
-    # No display manager: login stays on the tty and `startx` starts dwm.
     displayManager.startx.enable = true;
-
-    # The vendored fork, on the system PATH because startx execs it.
-    windowManager.dwm = {
-      enable = true;
-      package = pkgs.dwm;
-    };
   };
 
   services.picom.enable = true;
+  programs.slock.enable = true;
 
-  programs.slock.enable = true; # pkgs.slock is the vendored fork
-
-  # Docker needs no GPU; each host that has one enables
-  # hardware.nvidia-container-toolkit next to its NVIDIA block.
   virtualisation.docker.enable = true;
-
   services.tailscale.enable = true;
 
-  networking.firewall = {
-    trustedInterfaces = [ config.services.tailscale.interfaceName ];
-    allowedUDPPorts = [ config.services.tailscale.port ];
-  };
+  # openFirewall (off by default) opens tailscale's UDP port. Trusting the
+  # interface instead of per-port rules lets peers reach services here.
+  services.tailscale.openFirewall = true;
+  networking.firewall.trustedInterfaces = [ config.services.tailscale.interfaceName ];
 
-  systemd.services.tailscaled.serviceConfig.Environment = [
-    "TS_DEBUG_FIREWALL_MODE=nftables"
-  ];
-
+  # dwm is on the PATH because home-manager's ~/.xsession runs it. Not
+  # services.xserver.windowManager.dwm: that only registers a display-manager
+  # session, which the startx pseudo-DM never reads.
   environment.systemPackages = with pkgs; [
     wget
     git
     docker-compose
+    dwm
   ];
 
-  # Lets binaries installed outside Nix find their libraries.
-  programs.nix-ld.enable = true;
+  programs.nix-ld.enable = true; # binaries installed outside Nix find their libs
 
   system.stateVersion = "26.05";
 }

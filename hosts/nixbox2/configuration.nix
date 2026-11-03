@@ -1,36 +1,15 @@
 { config, ... }:
 
-# Host deltas only; everything shared lives in ../common-configuration.nix.
+# Host deltas only; ../common-configuration.nix and ../nvidia.nix hold the rest.
 {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [ ../nvidia.nix ];
 
   services.xserver.xkb.layout = "us";
 
-  # NVIDIA with PRIME offload, same shape as nixbox1; only the driver differs.
-  # hardware.graphics is left alone: the X server already mkDefaults it.
+  # The current release drops this GPU, so pin the last generation that supports
+  # it; it is pre-Turing, so the open modules are not an option either.
   hardware.nvidia = {
-    # The current release drops this GPU, so pin the last generation that
-    # supports it -- and it is pre-Turing, so the open modules are not an option.
     open = false;
     package = config.boot.kernelPackages.nvidiaPackages.legacy_580;
-    modesetting.enable = true;
-    powerManagement = {
-      enable = true;
-      finegrained = true;
-    };
-    nvidiaSettings = true;
-    prime = {
-      offload = {
-        enable = true;
-        enableOffloadCmd = true;
-      };
-      intelBusId = "PCI:0:2:0";
-      nvidiaBusId = "PCI:1:0:0";
-    };
   };
-
-  # Lets the containers docker starts (../common-configuration.nix) reach the GPU.
-  hardware.nvidia-container-toolkit.enable = true;
-
-  services.xserver.videoDrivers = [ "nvidia" ];
 }

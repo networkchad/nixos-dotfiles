@@ -5,9 +5,8 @@
   ...
 }:
 
-# The user half, shared by every host: apps, shell, and what the session
-# starts. Identity comes from the host table in ../flake.nix; the two options
-# below are filled in by ./<name>/home.nix.
+# The user profile every host shares; ./<name>/home.nix fills in `vars`, and
+# identity comes from the host table in ../flake.nix.
 {
   options.vars = {
     wallpaper = lib.mkOption {
@@ -48,10 +47,10 @@
       librewolf
       pi-coding-agent
 
-      # Vendored forks (overlay in ./common-configuration.nix); dwm is a system package.
+      # X session bits; st and slstatus are the ../src forks (overlay in
+      # ../common-configuration.nix), dwm is a system package.
       st
       slstatus
-
       dmenu
       feh
       flameshot
@@ -67,7 +66,6 @@
       source = ../src/slstatus/scripts;
       recursive = true;
     };
-
     xdg.configFile."wallpapers/bg.png".source = config.vars.wallpaper;
 
     programs = {
@@ -96,6 +94,9 @@
       };
     };
 
+    # dwm needs this to reparent AWT frames like every other WM.
+    home.sessionVariables._JAVA_AWT_WM_NONREPARENTING = "1";
+
     xsession = {
       enable = true;
 
@@ -107,13 +108,10 @@
         xset s 300
         xss-lock -- slock &
 
-        # Deliberately not `exec dwm`: home-manager appends its session teardown
-        # after this block (stop graphical-session.target, unset DISPLAY, ...),
-        # and `exec` replaces the shell before any of it runs -- which orphans
-        # every job above and leaves the next session with two bars, two fcitx5
-        # and a graphical-session.target that is already active. Background +
-        # `wait` keeps the shell alive for that teardown, after killing this
-        # session's own jobs.
+        # Not `exec dwm`: home-manager appends its session teardown after this
+        # block, and exec replaces the shell before any of it runs -- the next
+        # session then starts with two bars and two fcitx5. Background + wait
+        # keeps the shell alive for that teardown, after killing our own jobs.
         dwm &
         dwm_pid=$!
         wait "$dwm_pid" || true
