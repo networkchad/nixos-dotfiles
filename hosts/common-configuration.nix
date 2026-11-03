@@ -16,8 +16,12 @@
   # overrideAttrs: dwm and slock are used here, st and slstatus in ./common-home.nix,
   # and an overlay is the only thing both halves see. Their patches are carried
   # in the source (provenance: ../patches/README.md), so upstream's `patches`
-  # are dropped -- they would apply to code already modified by hand. The
-  # `-local` version suffix keeps a fork rebuild visible in nixos-rebuild output.
+  # are dropped -- they would apply to code already modified by hand.
+  #
+  # A fork's version is read out of the tree that is actually compiled,
+  # src/<name>/config.mk, and never inherited from nixpkgs: `old.version` would
+  # name a source tree this derivation does not contain, and the two drift
+  # independently (../src can move ahead of nixpkgs, or lag behind it).
   nixpkgs.overlays = [
     (
       final: prev:
@@ -29,11 +33,31 @@
       ]
         (
           name:
-          prev.${name}.overrideAttrs (old: {
-            version = "${old.version}-local";
-            src = lib.cleanSource (../src + /${name});
-            patches = [ ];
-          })
+          let
+            # src/<name>/config.mk carries `VERSION = x.y` for its own build.
+            version =
+              let
+                lines = lib.splitString "\n" (builtins.readFile (../src + /${name}/config.mk));
+                line = lib.findFirst (lib.hasPrefix "VERSION") null lines;
+                matched = if line == null then null else builtins.match "VERSION = +(.*)" line;
+              in
+              if matched == null || matched == [ ] then
+                builtins.throw "src/${name}/config.mk has no `VERSION = <version>` line"
+              else
+                lib.trim (lib.head matched);
+
+            # The `-local` suffix keeps a fork rebuild visible in nixos-rebuild
+            # output; the warning next to it says which way ../src drifted.
+            fork = prev.${name}.overrideAttrs (_: {
+              version = "${version}-local";
+              src = lib.cleanSource (../src + /${name});
+              patches = [ ];
+            });
+          in
+          lib.warnIf (
+            prev.${name}.version != version
+          ) "fork ../src/${name} is ${version}, nixpkgs packages ${prev.${name}.pname} ${prev.${name}.version}: the vendored tree is what builds"
+            fork
         )
     )
   ];

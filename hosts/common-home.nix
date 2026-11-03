@@ -106,7 +106,18 @@
         feh --bg-fill "$HOME/.config/wallpapers/bg.png" &
         xset s 300
         xss-lock -- slock &
-        exec dwm
+
+        # Deliberately not `exec dwm`: home-manager appends its session teardown
+        # after this block (stop graphical-session.target, unset DISPLAY, ...),
+        # and `exec` replaces the shell before any of it runs -- which orphans
+        # every job above and leaves the next session with two bars, two fcitx5
+        # and a graphical-session.target that is already active. Background +
+        # `wait` keeps the shell alive for that teardown, after killing this
+        # session's own jobs.
+        dwm &
+        dwm_pid=$!
+        wait "$dwm_pid" || true
+        kill $(jobs -p) 2>/dev/null || true
       '';
     };
   };

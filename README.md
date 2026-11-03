@@ -94,9 +94,16 @@ slstatus) side alike:
 
 * `patches = [ ]` — upstream's patch list is dropped on purpose; the local
   changes are carried in the source (provenance: `patches/README.md`).
-* `version = "<upstream>-local"` — so a fork rebuild is visible in
-  `nixos-rebuild` output (`dwm-6.6-local`, `st-0.9.2-local`, ...) instead of
-  being name-identical to upstream.
+* `version` is read out of `src/<pkg>/config.mk` and suffixed `-local` — so a
+  fork rebuild is visible in `nixos-rebuild` output (`dwm-6.8-local`,
+  `st-0.9.3-local`, ...) instead of being name-identical to upstream, and the
+  name always describes the tree that actually compiled. Inheriting nixpkgs'
+  version would drift silently (`../src/dwm` is 6.8 while nixpkgs packages 6.6);
+  now evaluation says so instead:
+
+  ```
+  evaluation warning: fork ../src/dwm is 6.8, nixpkgs packages dwm 6.6: the vendored tree is what builds
+  ```
 * `src = lib.cleanSource ...` — editing docs or patch notes next to the source
   cannot invalidate the derivation.
 
