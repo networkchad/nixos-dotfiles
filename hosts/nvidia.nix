@@ -33,6 +33,13 @@ in
         enable = true;
         finegrained = true;
       };
+      # powerManagement.enable buys two things nixpkgs wires up: the
+      # nvidia-suspend/resume/hibernate system units, and
+      # NVreg_PreserveVideoMemoryAllocations=1 (hardware/video/nvidia.nix) so the
+      # driver can drop its allocations across S3. That preservation depends on
+      # the persistence daemon, which is a separate switch and off by default --
+      # without it the first resume from a lid close is the interesting one.
+      nvidiaPersistenced = true;
       prime = {
         # The iGPU drives the session; `nvidia-offload <cmd>` puts one program on
         # the dGPU.
