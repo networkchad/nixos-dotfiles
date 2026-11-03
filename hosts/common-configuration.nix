@@ -166,6 +166,17 @@
     settings.unredir-if-possible = true;
   };
 
+  # Manuals are the largest thing in the closure that a dwm session never reads:
+  # every `-doc` output of the GTK/fcitx5/pavucontrol stack (kdoctools alone
+  # accounts for 775 MiB of the 10.3 GiB this system closes to) plus the NixOS
+  # manual and the info pages. `man` stays on -- it is the only one of the three
+  # that is usable from st.
+  documentation = {
+    doc.enable = false;
+    info.enable = false;
+    nixos.enable = false;
+  };
+
   # Both machines are laptops. This pins the behavior they already have rather
   # than fixing a bug: NixOS sets none of these (verified: the generated
   # /etc/systemd/logind.conf carries only KillUserProcesses, and logind reports
