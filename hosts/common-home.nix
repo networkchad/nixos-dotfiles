@@ -47,8 +47,9 @@
       librewolf
       pi-coding-agent
 
-      # X session bits; st and slstatus are the ../src forks (overlay in
-      # ../common-configuration.nix), dwm is a system package.
+      # X session bits; st and slstatus are the ../src forks (all four are
+      # defined by the overlay in ./common-configuration.nix), dwm is a system
+      # package because ~/.xsession runs it.
       st
       slstatus
       dmenu
@@ -61,7 +62,10 @@
 
     fonts.fontconfig.enable = true;
 
-    # slstatus reads its bar segments from here (src/slstatus/config.def.h).
+    # Every script here is referenced by src/slstatus/config.def.h, so a script
+    # nothing names is dead by definition. They are runtime files, not build
+    # inputs: the overlay filters them out of the slstatus derivation and they
+    # reach the session through this link.
     xdg.configFile."slstatus/scripts" = {
       source = ../src/slstatus/scripts;
       recursive = true;

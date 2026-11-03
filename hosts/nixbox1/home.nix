@@ -1,4 +1,4 @@
-{ ... }:
+_:
 
 # Connector names as `xrandr -q` prints them, in the order xrandr must apply them.
 {

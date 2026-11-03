@@ -11,15 +11,18 @@
 {
   networking.hostName = hostName;
 
-  # The ../src forks, defined once where both halves can see them (dwm and slock
-  # here, st and slstatus in ./common-home.nix). Upstream's `patches` are dropped:
-  # the local edits are already in the tree (../patches/README.md). `version` is
-  # read from src/<name>/config.mk because `old.version` would name a tree this
-  # derivation does not build, and `-local` keeps a fork rebuild visible in
-  # nixos-rebuild output.
+  # All four ../src forks, defined here because this is the one module both
+  # halves can see: dwm and slock come from the system side, st and slstatus are
+  # used by the session in ./common-home.nix. Upstream's `patches` are dropped:
+  # the hunks are already in the tree, and upstream's list applies to the release
+  # tarball these trees were forked from (../patches/README.md pins each base
+  # commit and lists what is actually local). `version` is read from
+  # src/<name>/config.mk because `old.version` would name a tree this derivation
+  # does not build, and `-local` keeps a fork rebuild visible in nixos-rebuild
+  # output.
   nixpkgs.overlays = [
     (
-      final: prev:
+      _final: prev:
       lib.genAttrs
         [
           "dwm"
@@ -38,7 +41,27 @@
           in
           prev.${name}.overrideAttrs (_: {
             version = "${lib.trim (builtins.head (builtins.match "VERSION = +(.*)" line))}-local";
-            src = lib.cleanSource (../src + /${name});
+            # Exactly what the Makefile reads: the sources, the two config files
+            # it builds against, and the man page (+ st's terminfo) it installs.
+            # LICENSE, README, FAQ and src/slstatus/scripts stay in the repo but
+            # out of the derivation, so editing one cannot rebuild a fork.
+            src = lib.cleanSourceWith {
+              src = ../src + /${name};
+              filter =
+                path: type:
+                type == "directory"
+                || lib.any (suffix: lib.hasSuffix suffix path) [
+                  ".c"
+                  ".h"
+                  ".1"
+                ]
+                || lib.elem (baseNameOf path) [
+                  "Makefile"
+                  "config.mk"
+                  "config.def.h"
+                  "st.info"
+                ];
+            };
             patches = [ ];
           })
         )
@@ -50,7 +73,17 @@
     efi.canTouchEfiVariables = true;
   };
 
-  nixpkgs.config.allowUnfree = true; # brave and the NVIDIA drivers
+  # The unfree set is exactly the NVIDIA stack -- a prefix, because the driver
+  # arrives under several names (nixbox1's closure alone carries nvidia-x11,
+  # nvidia-open, nvidia-settings, nvidia-x11-bin, nvidia-container-toolkit,
+  # nvidia-vaapi-driver) and which of them exist changes between nixpkgs
+  # releases. Checked both ways: replace the predicate with `_: false` and
+  # evaluating nixbox1 dies on "Refusing to evaluate package 'nvidia-x11-…'
+  # because it has an unfree license"; with only this prefix, both systems
+  # evaluate, which also proves nothing else needs the grant. brave is not in it
+  # -- MPL-2.0, `meta.unfree = false` -- despite what this line used to comment.
+  # `useGlobalPkgs` shares the config with home-manager.
+  nixpkgs.config.allowUnfreePredicate = pkg: lib.hasPrefix "nvidia" (lib.getName pkg);
 
   nix.settings = {
     experimental-features = [
@@ -68,7 +101,7 @@
 
   # Every name in the host table; a host adds a group when it enables something
   # that needs one (libvirtd on nixbox1).
-  users.users = lib.genAttrs users (name: {
+  users.users = lib.genAttrs users (_: {
     isNormalUser = true;
     extraGroups = [
       "wheel"
