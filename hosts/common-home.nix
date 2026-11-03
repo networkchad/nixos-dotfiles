@@ -110,7 +110,18 @@
         ${lib.optionalString (config.vars.xrandrArgs != "") "xrandr ${config.vars.xrandrArgs} &"}
         feh --bg-fill "$HOME/.config/wallpapers/bg.png" &
         xset s 300
-        xss-lock -- slock &
+
+        # --transfer-sleep-lock hands logind's sleep inhibitor to the locker, so
+        # a lid close locks on the way INTO suspend instead of resuming to a live
+        # desktop -- without it, suspend never touches the X screensaver and the
+        # resume is unlocked. slock works here because it never forks (no fork()
+        # anywhere in ../src/slock/slock.c; the only spawn is posix_spawnp for
+        # grabbreak-command), so xss-lock can tell "locked" from "exited". slock
+        # does not speak the inhibitor protocol and leaves the inherited fd open,
+        # so logind falls back to its delay ceiling: lid closes, screen locks,
+        # suspend follows a few seconds later. Bounded, and the end state is the
+        # one we wanted. Check after the first switch: `systemctl suspend`.
+        xss-lock --transfer-sleep-lock -- slock &
 
         # Not `exec dwm`: home-manager appends its session teardown after this
         # block, and exec replaces the shell before any of it runs -- the next

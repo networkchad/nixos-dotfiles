@@ -144,6 +144,23 @@
   services.picom.enable = true;
   programs.slock.enable = true;
 
+  # Both machines are laptops. This pins the behavior they already have rather
+  # than fixing a bug: NixOS sets none of these (verified: the generated
+  # /etc/systemd/logind.conf carries only KillUserProcesses, and logind reports
+  # suspend / "" / ignore through busctl), and upstream has moved these defaults
+  # before. Empty HandleLidSwitchExternalPower means "not used", so on AC the
+  # HandleLidSwitch action applies anyway -- writing "suspend" keeps that
+  # behavior and says it out loud. Closed lid on battery suspends; closed lid on
+  # the dock (a second output counts as docked) keeps running on HDMI.
+  #
+  # Locking on the way into suspend is the session's job, not logind's --
+  # ./common-home.nix passes the sleep lock to slock through xss-lock.
+  services.logind.settings.Login = {
+    HandleLidSwitch = "suspend";
+    HandleLidSwitchExternalPower = "suspend";
+    HandleLidSwitchDocked = "ignore";
+  };
+
   virtualisation.docker.enable = true;
   services.tailscale.enable = true;
 
