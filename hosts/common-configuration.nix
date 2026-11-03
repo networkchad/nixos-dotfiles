@@ -141,8 +141,30 @@
     displayManager.startx.enable = true;
   };
 
-  services.picom.enable = true;
   programs.slock.enable = true;
+
+  services.picom = {
+    enable = true;
+
+    # Compositing exists here for exactly one feature: st's alpha
+    # (../src/st/config.def.h) needs a redirect-and-repaint WM. The module
+    # default -- xrender with vsync off -- pays that tax and still tears, and
+    # picom's own documented pairing for vsync is the glx backend.
+    #
+    # glx is safe on both boxes because PRIME offload puts the *session* on the
+    # iGPU (nixbox1: `intel_backlight` under card1/eDP-1, so modesetting drives
+    # the panel and composites too) -- picom never touches the blob. If it ever
+    # does, the rollback is `backend = "xrender"` plus
+    # `settings.xrender-sync-fence = true`, which is picom's own note for
+    # nvidia-drivers with the GLX backend.
+    #
+    # unredir-if-possible hands a fullscreen window back to the X server, so
+    # games don't sit behind picom's swap chain (it already happens for DPMS
+    # power-off, this is the same mechanism for fullscreen).
+    backend = "glx";
+    vSync = true;
+    settings.unredir-if-possible = true;
+  };
 
   # Both machines are laptops. This pins the behavior they already have rather
   # than fixing a bug: NixOS sets none of these (verified: the generated
