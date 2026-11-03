@@ -11,6 +11,12 @@
 
   services.xserver.xkb.layout = "jp";
 
+  # lspci on this board: iGPU on bus 0, dGPU on bus 1.
+  video.prime = {
+    intelBusId = "PCI:0:2:0";
+    nvidiaBusId = "PCI:1:0:0";
+  };
+
   # Open modules: right for this GPU (Turing and newer), at the kernel's default
   # driver generation.
   hardware.nvidia.open = true;
