@@ -1,14 +1,18 @@
-{
-  lib,
-  pkgs,
-  users,
-  ...
-}:
+{ config, ... }:
 
-# Host deltas only; ../common-configuration.nix and ../nvidia.nix hold the rest.
+# One line per service this machine runs; the shared core is imported by the
+# flake (../../modules/system/base.nix) and the board facts live in
+# ./hardware-configuration.nix.
 {
-  imports = [ ../nvidia.nix ];
+  imports = [
+    ../../modules/system/desktop.nix
+    ../../modules/system/network.nix
+    ../../modules/system/docker.nix
+    ../../modules/system/libvirtd.nix
+    ../../modules/system/nvidia.nix
+  ];
 
+  # The keymap the desktop module's X server uses.
   services.xserver.xkb.layout = "jp";
 
   # The console gets the same layout as X. This machine is used on the tty
@@ -25,19 +29,4 @@
   # Open modules: right for this GPU (Turing and newer), at the kernel's default
   # driver generation.
   hardware.nvidia.open = true;
-
-  # VM stack, this machine only.
-  virtualisation.libvirtd = {
-    enable = true;
-    qemu.package = pkgs.qemu_kvm; # host-passthrough CPU, no emulation targets
-  };
-  programs.virt-manager.enable = true;
-
-  environment.systemPackages = with pkgs; [ dnsmasq ];
-
-  users.users = lib.genAttrs users (_: {
-    extraGroups = [ "libvirtd" ];
-  });
-
-  networking.firewall.trustedInterfaces = [ "virbr0" ]; # libvirt's bridge
 }

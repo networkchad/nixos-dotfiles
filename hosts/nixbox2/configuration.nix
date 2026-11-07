@@ -1,9 +1,18 @@
 { config, ... }:
 
-# Host deltas only; ../common-configuration.nix and ../nvidia.nix hold the rest.
+# One line per service this machine runs; the shared core is imported by the
+# flake (../../modules/system/base.nix) and the board facts live in
+# ./hardware-configuration.nix.
 {
-  imports = [ ../nvidia.nix ];
+  imports = [
+    ../../modules/system/desktop.nix
+    ../../modules/system/network.nix
+    ../../modules/system/docker.nix
+    ../../modules/system/nvidia.nix
+  ];
 
+  # The keymap the desktop module's X server uses; US is also the console
+  # default, so no console.useXkbConfig here.
   services.xserver.xkb.layout = "us";
 
   # lspci on this board: same topology as nixbox1, stated here because it is a

@@ -5,13 +5,14 @@
   ...
 }:
 
-# The user profile every host shares; ./<name>/home.nix fills in `vars`, and
-# identity comes from the host table in ../flake.nix.
+# The X/dwm session and the apps that need one; a host imports this and fills in
+# the two facts below. `vars.wallpaper` has no default on purpose: a host that
+# enables the session has to say what it looks like.
 {
   options.vars = {
     wallpaper = lib.mkOption {
       type = lib.types.path;
-      example = ../pics/2077.png;
+      example = ../../pics/2077.png;
       description = "Image linked at ~/.config/wallpapers/bg.png and set by feh.";
     };
 
@@ -27,30 +28,25 @@
   };
 
   config = {
-    home.stateVersion = "26.05";
-
     home.packages = with pkgs; [
-      # fcitx5 types Japanese here, so CJK fonts are not optional.
+      # fcitx5 (system-wide, ../system/desktop.nix) types Japanese here, so CJK
+      # fonts are not optional.
       noto-fonts
       noto-fonts-cjk-sans
       noto-fonts-color-emoji
 
       pavucontrol
       mpv
-      fastfetch
       keepassxc
-      alsa-utils # amixer: dwm's mute/volume keys
-      brightnessctl # /sys/class/backlight: dwm's brightness keys
-      uv
-      devenv
-      dysk
       brave
       librewolf
-      pi-coding-agent
 
-      # X session bits; st and slstatus are the ../src forks (all four are
-      # defined by the overlay in ./common-configuration.nix), dwm is a system
-      # package because ~/.xsession runs it.
+      alsa-utils # amixer: dwm's mute/volume keys
+      brightnessctl # /sys/class/backlight: dwm's brightness keys
+
+      # The session's own pieces; st and slstatus are the ../../src forks (all four
+      # are defined by the overlay in ../system/forks.nix, which reaches this pkgs
+      # through `useGlobalPkgs`).
       st
       slstatus
       dmenu
@@ -68,39 +64,27 @@
     # inputs: the overlay filters them out of the slstatus derivation and they
     # reach the session through this link.
     xdg.configFile."slstatus/scripts" = {
-      source = ../src/slstatus/scripts;
+      source = ../../src/slstatus/scripts;
       recursive = true;
     };
     xdg.configFile."wallpapers/bg.png".source = config.vars.wallpaper;
 
-    programs = {
-      home-manager.enable = true;
-      btop.enable = true;
-
-      vim = {
-        enable = true;
-        extraConfig = ''
-          syntax on
-          set number
-        '';
-      };
-
-      bash = {
-        enable = true;
-
-        shellAliases.copy = "xclip -selection clipboard -i";
-
-        # No display manager: the session starts from the login shell on tty1.
-        profileExtra = ''
-          if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
-            exec startx "$HOME/.xsession"
-          fi
-        '';
-      };
-    };
-
     # dwm needs this to reparent AWT frames like every other WM.
     home.sessionVariables._JAVA_AWT_WM_NONREPARENTING = "1";
+
+    programs.bash = {
+      # Both merge into the ones ./base.nix enables: `profileExtra` is
+      # types.lines and `shellAliases` an attrsOf, so splitting the shell config
+      # across the two modules costs nothing.
+      shellAliases.copy = "xclip -selection clipboard -i";
+
+      # No display manager: the session starts from the login shell on tty1.
+      profileExtra = ''
+        if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
+          exec startx "$HOME/.xsession"
+        fi
+      '';
+    };
 
     xsession = {
       enable = true;
@@ -116,7 +100,7 @@
         # a lid close locks on the way INTO suspend instead of resuming to a live
         # desktop -- without it, suspend never touches the X screensaver and the
         # resume is unlocked. slock works here because it never forks (no fork()
-        # anywhere in ../src/slock/slock.c; the only spawn is posix_spawnp for
+        # anywhere in ../../src/slock/slock.c; the only spawn is posix_spawnp for
         # grabbreak-command), so xss-lock can tell "locked" from "exited". slock
         # does not speak the inhibitor protocol and leaves the inherited fd open,
         # so logind falls back to its delay ceiling: lid closes, screen locks,

@@ -16,7 +16,7 @@ tarballs: each tree is a post-release snapshot. So a base is *newer* than the
 `VERSION` in `src/<pkg>/config.mk` (dwm says 6.8, the tree is 6.8 plus upstream
 commits up to the base) and newer than what nixpkgs packages (dwm 6.6).
 
-That is why the overlay in `../hosts/common-configuration.nix` sets
+That is why the overlay in `../modules/system/forks.nix` sets
 `patches = [ ]`: the hunks below are already in `../src`, and upstream's own
 patch list targets the release tarball.
 

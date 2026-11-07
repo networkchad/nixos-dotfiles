@@ -1,7 +1,10 @@
 _:
 
-# Connector names as `xrandr -q` prints them, in the order xrandr must apply them.
+# The session is ../../modules/home/desktop.nix; only the facts differ per host.
 {
+  imports = [ ../../modules/home/desktop.nix ];
+
+  # Connector names as `xrandr -q` prints them, in the order xrandr must apply them.
   vars.wallpaper = ../../pics/2077.png;
 
   vars.xrandrArgs =

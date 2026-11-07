@@ -33,8 +33,9 @@
       };
 
       # One host table entry -> one nixosSystem. Identity is passed to every
-      # module as specialArgs; the three files under ./hosts/<name> are the
-      # whole configuration.
+      # module as specialArgs. Each host gets the two `base` modules and its own
+      # two files; everything else it runs is imported by name in
+      # ./hosts/<name>/configuration.nix from ./modules/{system,home}/.
       mkSystem =
         hostName:
         { system, users }:
@@ -43,7 +44,7 @@
           specialArgs = { inherit hostName users; };
 
           modules = [
-            ./hosts/common-configuration.nix
+            ./modules/system/base.nix
             ./hosts/${hostName}/hardware-configuration.nix
             ./hosts/${hostName}/configuration.nix
 
@@ -59,7 +60,7 @@
                   home.username = username;
                   home.homeDirectory = "/home/${username}";
                   imports = [
-                    ./hosts/common-home.nix
+                    ./modules/home/base.nix
                     ./hosts/${hostName}/home.nix
                   ];
                 });
