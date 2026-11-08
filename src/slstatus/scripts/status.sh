@@ -28,24 +28,57 @@ set -u
 sep=" | "
 out="NixOS"
 
-# VPN: tailscale's own interface.
+# VPN: one token per tunnel class that carries traffic, comma-joined --
+# `VPN:TS,WG` with tailscale and a wireguard interface up, `/` with none.
 #
 # The old vpn.sh asked NetworkManager (`nmcli ... | grep -E 'vpn|wireguard'`),
-# which can never match: NM lists tailscale0 as `tailscale0:tun:activated`, so
-# the segment read "/" on every host even with the tunnel up. tailscale is not
-# an NM VPN connection and never will be. A logged-out daemon keeps the link but
-# has no address, so the test is tailscale's own CGNAT /10 (100.64.0.0/10),
-# matched with a case pattern instead of a grep fork.
+# which can never match tailscale: NM lists it as `tailscale0:tun:activated`, so
+# the segment read "/" on every host even with the tunnel up. tailscale is not an
+# NM VPN connection and never will be. nmcli is also the slower answer to the
+# same question (26 ms of D-Bus versus 2 ms for `ip`, measured on this box) and
+# it reports every plugin as the bare type `vpn`, so openvpn and openconnect are
+# indistinguishable in it. Kernel state answers for all three classes in the one
+# `ip` fork the segment already paid for.
 #
-# NM-managed VPNs (openconnect, wireguard-go via NM) are NOT reported. If one is
-# ever needed, that is the place for the nmcli fork:
-#     nmcli -t -f TYPE,STATE c show --active | grep -q 'vpn:activated' && vpn=OV
+# The test per interface is the one the tailscale case already used -- a scope
+# global address, because a logged-out tailscaled keeps the link with none. The
+# CGNAT literal went with it: an address is an address, and a tailnet outside
+# 100.64.0.0/10 used to read as no VPN at all.
+#
+# The class comes from the interface name, because the kernel records no class:
+# tailscale0 here is an ordinary tun -- 65534 (ARPHRD_NONE) in
+# /sys/class/net/tailscale0/type, `ip -d link` says `tun type tun`, which is
+# exactly why NM advertises it as `tailscale0:tun` -- and a wireguard device
+# reports the same 65534. So the name is the only handle the bar has: wg* is what
+# `networking.wireguard.interfaces.wg0` and NM's native wireguard create, tun* is
+# `openvpn --dev tun` and the openvpn plugin's device, ovpn* is the name newer
+# NetworkManager gives that same plugin. What this cannot see is a config that
+# renames its device (`dev-node`, or `--dev tap`, which makes a tap0) -- and an
+# interface whose only address is link-local, which is reported as down because it
+# is: nothing is being tunnelled through it.
 vpn="/"
-if [ -e /sys/class/net/tailscale0 ]; then
-	case "$(ip -o -4 addr show dev tailscale0 2>/dev/null)" in
-	*" 100."*) vpn="TS" ;;
-	esac
-fi
+addrs=$(ip -o addr show scope global 2>/dev/null)
+# shellcheck disable=SC2086 # word splitting is the parser here, twice over
+for class in "TS tailscale*" "WG wg*" "OV tun* ovpn*"; do
+	tag=${class%% *}
+	on=""
+	# shellcheck disable=SC2086,SC2231 # and the glob has to stay a glob
+	for pattern in ${class#* }; do
+		for dev in /sys/class/net/$pattern; do
+			[ -e "$dev" ] || continue
+			case "$addrs" in
+			*" ${dev##*/} "*inet*) on=1 ;;
+			esac
+		done
+	done
+	if [ -n "$on" ]; then
+		if [ "$vpn" = "/" ]; then
+			vpn=$tag
+		else
+			vpn="$vpn,$tag"
+		fi
+	fi
+done
 out="$out${sep}VPN:$vpn"
 
 # Internet: a default route whose device reports carrier.

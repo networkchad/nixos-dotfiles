@@ -18,6 +18,7 @@ modules/
     desktop.nix               X on tty1, dwm/picom/slock, pipewire, fcitx5, lid
     forks.nix                 the src/ overlay, pulled in by desktop.nix
     network.nix               NetworkManager, tailscale, firewall trust
+    power.nix                 thermald + the power-profile switch (laptops)
     docker.nix                daemon, group, compose CLI
     libvirtd.nix              qemu + virt-manager + dnsmasq + virbr0 (nixbox1)
     nvidia.nix                PRIME offload + the unfree grant (NVIDIA hosts)
@@ -48,6 +49,7 @@ stay ignorant of what a host runs.
 imports = [
   ../../modules/system/desktop.nix
   ../../modules/system/network.nix
+  ../../modules/system/power.nix
   ../../modules/system/docker.nix
   ../../modules/system/libvirtd.nix
   ../../modules/system/nvidia.nix

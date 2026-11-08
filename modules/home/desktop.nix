@@ -90,7 +90,12 @@
       enable = true;
 
       initExtra = ''
-        fcitx5 -d &
+        # No `-d`: that flag double-forks, which takes fcitx5 out of the job list
+        # the teardown below kills. It then outlives the session, the next
+        # session's fcitx5 finds the D-Bus name taken and exits, and what keeps
+        # typing working is the previous session's daemon. Foreground + `&` is
+        # the same non-blocking start, but the job is ours to kill.
+        fcitx5 &
         slstatus &
         ${lib.optionalString (config.vars.xrandrArgs != "") "xrandr ${config.vars.xrandrArgs} &"}
         feh --bg-fill "$HOME/.config/wallpapers/bg.png" &

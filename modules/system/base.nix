@@ -14,7 +14,15 @@
   networking.hostName = hostName;
 
   boot.loader = {
-    systemd-boot.enable = true;
+    systemd-boot = {
+      enable = true;
+      # Both ESPs are the installer's 1 GiB vfat partition and every generation
+      # writes a kernel and an initrd into it. The default `null` is not "no
+      # limit until the GC runs": it is no limit at all, and the GC only frees
+      # a generation after the 14 days -- so a fortnight of rebuilds is what
+      # fills /boot, at the one moment when a rollback would be useful.
+      configurationLimit = 6;
+    };
     efi.canTouchEfiVariables = true;
   };
 
@@ -54,8 +62,9 @@
     git
   ];
 
-  # Every host in the table was installed on the release this flake pins; a host
-  # carried over from an older one overrides this (single-value option: with
-  # `lib.mkForce`, in its own configuration.nix).
-  system.stateVersion = "26.05";
+  # Every host in the table was installed on the release this flake pins. A host
+  # carried over from an older one says so in its own configuration.nix --
+  # mkDefault so that statement is a plain assignment and not a `lib.mkForce`
+  # fight with this file.
+  system.stateVersion = lib.mkDefault "26.05";
 }

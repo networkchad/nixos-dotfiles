@@ -46,7 +46,13 @@ in
       modesetting.enable = true;
       powerManagement = {
         enable = true;
-        finegrained = true;
+        # Runtime D3 driven by the driver itself is a feature of the *open*
+        # modules; on a pre-Turing board pinned to the proprietary blob the
+        # `NVreg_DynamicPowerManagement=0x02` module parameter is accepted and
+        # ignored. So this one line of the PRIME shape does not travel, and it
+        # reads the host's own `hardware.nvidia.open` instead of being stated
+        # here for the same reason the two bus ids are not.
+        finegrained = config.hardware.nvidia.open;
       };
       # powerManagement.enable buys two things nixpkgs wires up: the
       # nvidia-suspend/resume/hibernate system units, and

@@ -1,13 +1,19 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  lib,
+  ...
+}:
 
 # The user half every host gets, imported by the flake: a shell, an editor, the
 # tools that work over ssh or on a tty. The session and the apps with windows
 # are ./desktop.nix, which a graphical host imports itself. Identity comes
 # from the host table in ../../flake.nix; a host carried over from an older
-# release overrides it with `lib.mkForce`.
+# release states its own stateVersion below.
 {
-  # Every host in the table was created on the release this flake pins.
-  home.stateVersion = "26.05";
+  # Every host in the table was created on the release this flake pins;
+  # mkDefault, so an older host overrides it with a plain assignment in its own
+  # home.nix.
+  home.stateVersion = lib.mkDefault "26.05";
 
   home.packages = with pkgs; [
     fastfetch
