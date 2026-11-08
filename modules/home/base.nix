@@ -1,6 +1,8 @@
 {
   pkgs,
   lib,
+  config,
+  hostName,
   ...
 }:
 
@@ -37,6 +39,17 @@
 
     # Enabled here; ./desktop.nix adds the clipboard alias to the same program
     # (and used to add a tty1 `startx` autostart, which ly replaced).
-    bash.enable = true;
+    bash = {
+      enable = true;
+
+      # Rebuild the machine you are typing on. `hostName` is the host table's and
+      # arrives as a module argument through home-manager's extraSpecialArgs -- the
+      # nixosSystem specialArgs stop at the system layer -- so this one line in this
+      # one file is right on every host and no host file repeats it. The flake is an
+      # absolute path (the repo's documented location, which is also what the
+      # /etc/nixos symlink points at), so the alias works from any directory and not
+      # only from a checkout the way `--flake .` does.
+      shellAliases.rebuild = "sudo nixos-rebuild switch --flake ${config.home.homeDirectory}/nixos-dotfiles#${hostName}";
+    };
   };
 }

@@ -180,6 +180,13 @@ nix fmt                                       # nixfmt-tree, pinned by this lock
 nix fmt -- --fail-on-change                   # the same, as a gate: fail, don't rewrite
 ```
 
+`rebuild` is an alias from `modules/home/base.nix` for
+`sudo nixos-rebuild switch --flake ~/nixos-dotfiles#<this host>` -- the host name
+comes from the host table (via home-manager's `extraSpecialArgs`, since the
+`nixosSystem` specialArgs stop at the system layer), and the flake is an absolute
+path, so it is correct on whichever box you are typing on and works from any
+directory. `--flake .` still needs the checkout.
+
 Build fails → `--show-trace`. Bad switch → `sudo nixos-rebuild --rollback` (or
 the previous systemd-boot entry).
 

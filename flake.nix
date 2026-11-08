@@ -56,6 +56,12 @@
                 useGlobalPkgs = true;
                 useUserPackages = true;
                 backupFileExtension = "backup";
+                # The nixosSystem specialArgs do not reach the per-user module
+                # system; this is the same host table entry, handed to the home
+                # half so a home module can name the machine it is built for.
+                extraSpecialArgs = {
+                  inherit hostName;
+                };
                 users = lib.genAttrs users (username: {
                   home.username = username;
                   home.homeDirectory = "/home/${username}";
