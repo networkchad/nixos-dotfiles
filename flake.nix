@@ -72,10 +72,14 @@
     {
       nixosConfigurations = lib.mapAttrs mkSystem hosts;
 
-      # `nix fmt` using the nixpkgs this lock pins: nixfmt, the style the tree is
-      # already written in.
+      # `nix fmt` using the nixpkgs this lock pins, in the style the tree is
+      # already written in. `nixfmt-tree`, not bare `nixfmt`: `nix fmt` hands the
+      # formatter the flake directory and nixfmt 1.5 no longer takes one (it
+      # falls back to stdin and dies on "unexpected end of input", which is what
+      # `nix fmt` did on this tree until now). nixfmt-tree walks the tree itself,
+      # and `nix fmt -- --fail-on-change` is a gate CI can use.
       formatter = lib.genAttrs (lib.unique (lib.mapAttrsToList (_: h: h.system) hosts)) (
-        system: nixpkgs.legacyPackages.${system}.nixfmt
+        system: nixpkgs.legacyPackages.${system}.nixfmt-tree
       );
     };
 }
