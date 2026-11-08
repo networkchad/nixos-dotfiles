@@ -1,6 +1,12 @@
 /* See LICENSE file for copyright and license details. */
 
-/* interval between updates (in ms) */
+/* interval between updates (in ms)
+ *
+ * 1000 because of `datetime` at the bottom of args[]: slstatus has ONE global
+ * interval and the clock is the only component that wants a fast one. That is
+ * affordable when the shell side is a single run_command (scripts/status.sh,
+ * ~10 ms a pass); with one script per segment it was ~70 ms of fork+exec every
+ * second, serialized against the clock in the same single-threaded loop. */
 const unsigned int interval = 1000;
 
 /* text to show if no value can be retrieved */
@@ -67,12 +73,18 @@ static const char unknown_str[] = "n/a";
 
 static const struct arg args[] = {
     /* function     format          argument */
-    { run_command,    "%s",          "sh -c $HOME/.config/slstatus/scripts/os-nixos.sh" },
+    /* Everything the shell knows: OS, VPN, net, battery, volume. One component,
+     * not five -- see the header of scripts/status.sh for the cost and for the
+     * ordering rule that comes with it (the shell segments have to stay
+     * adjacent; move the two lines below it up here to put CPU/RAM on the left).
+     * The script supplies its own separators, so each format string below starts
+     * with " | ".
+     *
+     * Called as a program, not through an extra `sh -c`: slstatus already hands
+     * this string to `sh -c`, so the path is the whole command -- which means
+     * scripts/status.sh needs its shebang AND its exec bit (git mode 100755). */
+    { run_command,    "%s",          "$HOME/.config/slstatus/scripts/status.sh" },
     { cpu_perc,       " | CPU:%s%%", NULL },
     { ram_perc,       " | RAM:%s%%", NULL },
-    { run_command,    " | VPN:%s",   "sh -c $HOME/.config/slstatus/scripts/vpn.sh" },
-    { run_command,    " | Net:%s",   "sh -c $HOME/.config/slstatus/scripts/internet.sh" },
-    { run_command,    "%s",          "sh -c $HOME/.config/slstatus/scripts/battery.sh" },
-    { run_command,    " | Vol:%s",   "sh -c $HOME/.config/slstatus/scripts/volume.sh" },
     { datetime,       " | %s",       "%Y-%m-%d %H:%M" },
 };

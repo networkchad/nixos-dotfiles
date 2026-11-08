@@ -134,7 +134,45 @@ nix fmt                                       # nixfmt, pinned by this lock
 Build fails → `--show-trace`. Bad switch → `sudo nixos-rebuild --rollback` (or
 the previous systemd-boot entry).
 
+### /etc/nixos is a symlink to this repo
+
+`nixos-rebuild-ng` implies `--flake` when `/etc/nixos/flake.nix` exists and picks
+`nixosConfigurations.<hostname>` (models.py, `_get_hostname`), so pointing
+`/etc/nixos` here makes a bare `nixos-rebuild switch` mean *this* system's
+switch. Once per host:
+
+```sh
+sudo mv /etc/nixos /etc/nixos.installer-backup   # the installer's own default config
+sudo ln -s /home/$USER/nixos-dotfiles /etc/nixos
+nixos-rebuild dry-activate                       # should name nixbox1, not "nixos"
+```
+
+Without the link, `/etc/nixos` keeps whatever the installer left there -- on both
+boxes that was the stock `configuration.nix` with `networking.hostName = "nixos"`,
+which a forgotten `--flake` would happily build and switch to. A path that
+contains `.git` resolves to `git+file://`, so the working tree is used even when
+dirty (`Revision: …-dirty`, verified); only `.gitignore`d files are left out, the
+same content `--flake .` sees.
+
 `nix.gc` runs weekly with 14-day retention; by hand: `sudo nix-collect-garbage -d`.
+
+## State this repo does not own
+
+Nothing here holds a secret, which also means `nixos-rebuild` alone does not
+finish a fresh host. Out of the repo, on purpose:
+
+* the account password -- `users.users.*` declares none, so a brand-new host has
+  a **locked** account until it is set from a tty (`sudo passwd anon`);
+* `sudo tailscale up`, once per host: `network.nix` enables the daemon, never
+  the login;
+* NetworkManager's saved Wi-Fi secrets (`/var/lib/NetworkManager`);
+* libvirt's own tree (`/var/lib/libvirt`): VMs, networks, storage pools. The
+  `iso` pool targets `~/Downloads/iso`, so that directory has to exist -- if it
+  does not, libvirtd logs `Failed to autostart storage pool 'iso'` at every boot
+  (`journalctl -b -p err`). `mkdir -p ~/Downloads/iso`, or drop the pool with
+  `sudo virsh pool-undefine iso`.
+
+A reformat loses all four; the password and the VMs are the two that hurt.
 
 No CI, no linters, no `devShell` — this repo is only what the two machines need.
 The one exception is `nix fmt`: the formatter is a flake output, so the tree's
