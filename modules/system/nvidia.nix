@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.video.prime;
@@ -71,6 +76,22 @@ in
         inherit (cfg) intelBusId nvidiaBusId;
       };
     };
+
+    # Hardware video decode for the GPU that actually drives the session: the
+    # offload shape puts the desktop on the iGPU, but only the NVIDIA side of
+    # VA-API arrives by itself (the graphics module adds nvidia-vaapi-driver);
+    # with nothing for Intel, brave/LibreWolf/mpv decode in software on the
+    # panel's own GPU. Keyed off the host's own `open` the way `finegrained`
+    # is -- which is also where the call gets made that nixbox2 (legacy blob, no
+    # browser video on it) goes without. Check with `vainfo`: it lists the
+    # driver, the VA-API version and the entrypoints a browser needs.
+    hardware.graphics.extraPackages = lib.optionals config.hardware.nvidia.open (
+      with pkgs;
+      [
+        intel-media-driver # the VA-API driver, Gen8 and newer
+        libva-utils # vainfo
+      ]
+    );
 
     # Lets the containers docker starts reach the GPU.
     hardware.nvidia-container-toolkit.enable = true;
