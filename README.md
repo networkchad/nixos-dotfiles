@@ -19,7 +19,7 @@ modules/
     desktop.nix               ly + X on tty1, dwm/picom/slock, pipewire, fcitx5, lid
     forks.nix                 the src/ overlay, pulled in by desktop.nix
     network.nix               NetworkManager, tailscale, firewall trust
-    power.nix                 thermald + the power-profile switch (laptops)
+    power.nix                 thermald, the power-profile switch, upower (laptops)
     docker.nix                daemon, group, compose CLI
     libvirtd.nix              qemu + virt-manager + virbr0 (nixbox1)
     nvidia.nix                PRIME offload + the unfree grant (NVIDIA hosts)

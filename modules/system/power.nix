@@ -1,5 +1,6 @@
-# Thermal and power policy for the hosts that are laptops. Neither line fixes a
-# bug; both replace a thing that is currently being done by nobody.
+# Thermal and power policy for the hosts that are laptops. Two of these three
+# lines replace something that is currently being done by nobody; the third stops
+# an error every browser start logs.
 #
 # thermald is Intel's own answer to a package that hits its thermal envelope:
 # without it the chip reacts through firmware rules only, and the P-state driver
@@ -18,4 +19,15 @@
   services.thermald.enable = true;
 
   services.power-profiles-daemon.enable = true;
+
+  # upower owns `org.freedesktop.UPower` -- battery and uptime information, which
+  # is what a browser asks before it will tell a page there is a battery at all.
+  # Nothing here enabled it, so the name is not activatable and every Chromium
+  # start logs `Failed to call method ... /org/freedesktop/UPower/devices/
+  # DisplayDevice: The name is not activatable`. `busctl` makes this easy to
+  # misread: the `org.freedesktop.UPower.PowerProfiles` that IS on the bus is
+  # power-profiles-daemon's own, differently shaped interface, not upower. The two
+  # coexist -- that is the GNOME combination -- and PPD only asserts against TLP
+  # and auto-cpufreq, not against upower.
+  services.upower.enable = true;
 }
