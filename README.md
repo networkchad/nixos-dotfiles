@@ -21,7 +21,7 @@ modules/
     network.nix               NetworkManager, tailscale, firewall trust
     power.nix                 thermald + the power-profile switch (laptops)
     docker.nix                daemon, group, compose CLI
-    libvirtd.nix              qemu + virt-manager + dnsmasq + virbr0 (nixbox1)
+    libvirtd.nix              qemu + virt-manager + virbr0 (nixbox1)
     nvidia.nix                PRIME offload + the unfree grant (NVIDIA hosts)
   home/
     base.nix                  every user (flake imports it): shell, vim, CLI
