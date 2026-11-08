@@ -4,9 +4,10 @@
 
 ![System Showcase](pics/demo.png)
 
-One desktop on both machines: **X11 + dwm**, no display manager (login on tty1,
-`startx`). The Wayland session (dwl) that used to sit next to it is in the git
-history.
+One desktop on both machines: **X11 + dwm** behind **ly** on tty1 -- no
+autologin, and home-manager's `~/.xsession` is still the session. The Wayland
+session (dwl) and the `startx`-from-the-login-shell setup that used to sit next
+to it are in the git history.
 
 ## Layout
 
@@ -15,7 +16,7 @@ flake.nix                     host table + nixosSystem factory; no config here
 modules/
   system/
     base.nix                  every host (flake imports it): boot, nix, users, tz
-    desktop.nix               X on tty1, dwm/picom/slock, pipewire, fcitx5, lid
+    desktop.nix               ly + X on tty1, dwm/picom/slock, pipewire, fcitx5, lid
     forks.nix                 the src/ overlay, pulled in by desktop.nix
     network.nix               NetworkManager, tailscale, firewall trust
     power.nix                 thermald + the power-profile switch (laptops)
@@ -79,6 +80,51 @@ nixbox1, `legacy_580` on nixbox2) instead of inheriting ids that happen to be
 right twice. The flake passes `hostName` and `users` to every module as
 `specialArgs`, so no module names a user or a machine.
 
+## Session
+
+ly owns tty1 and starts X, but the session it launches is the one home-manager
+writes, not the `none+dwm` entry dwm registers. The chain, in order:
+
+```
+ly                     PAM service `ly`, tty1, no autologin
+└─ X                   displayManager.xserverBin/xserverArgs, under systemd-cat -t xserver-wrapper
+   └─ xsession-wrapper /etc/profile, ~/.profile, ~/.xprofile, xrdb, sessionCommands
+      └─ ~/.xsession   exec'd: fcitx5, slstatus, xrandr, feh, xss-lock, then `dwm &` + wait
+         └─ teardown   home-manager stops graphical-session{,-pre}.target
+```
+
+Three choices in it are deliberate:
+
+* **no autologin.** The login password is what stands between a closed lid and
+  the desktop; the tty setup had that for free and a display manager gives it up
+  for free, so `services.displayManager.autoLogin` stays off and ly prompts.
+* **`ly.settings.save = false`.** ly 1.4's username box is not a text field --
+  `UserList` is a `CyclableLabel` over `getAllUsernames()` (every uid inside
+  login.defs' range, plus root always), so a name is always on screen and the
+  list is not filterable. `save` is the half that is: the prefill with the last
+  user, and the `/etc/ly/save.txt` behind it (username + session index, in the
+  clear, under `/etc`).
+* **`ly.settings.shell = false`.** Its "Shell" row is not a shell here: ly runs
+  `sh -c "<setup_cmd> <shell>"` for it, and `setup_cmd` is the wrapper above,
+  which execs `~/.xsession` first -- so the row is a second, misleading dwm. The
+  debug shell is Ctrl+Alt+F2 instead: logind instantiates `autovt@tty2` -> agetty,
+  ly's unit conflicts only with `autovt@tty1`, and that path still works with X
+  or ly themselves wedged.
+
+`xsession.windowManager.command` is `""` because the wrapper's last act is
+`eval exec ~/.xsession "$@"`: `$1` is the generated session script's path, and
+home-manager's default `test -n "$1" && eval "$@"` would run it -- a second dwm,
+started from the system fallback, at the moment of logout.
+
+Session output lands in the journal, not `~/.xsession-errors`
+(`services.displayManager.logToJournal` defaults to true):
+
+```sh
+journalctl -t xsession          # fcitx5, slstatus, xrandr, dwm: stdout and stderr
+journalctl -t xserver-wrapper   # the X server
+journalctl -u display-manager   # ly as a unit; ly's own log is /var/log/ly.log
+```
+
 ## Hosts
 
 | host    | notes                                |
@@ -130,7 +176,8 @@ nixos-rebuild switch --flake .#nixbox1 next   # + set as default boot entry
 nixos-rebuild reboot --flake .#nixbox1 next   # switch + reboot
 nixos-rebuild dry-activate --flake .#nixbox1  # preview changes, touch nothing
 nix eval ".#nixosConfigurations.nixbox2.config.system.build.toplevel.drvPath"  # check the other box
-nix fmt                                       # nixfmt, pinned by this lock
+nix fmt                                       # nixfmt-tree, pinned by this lock
+nix fmt -- --fail-on-change                   # the same, as a gate: fail, don't rewrite
 ```
 
 Build fails → `--show-trace`. Bad switch → `sudo nixos-rebuild --rollback` (or
@@ -177,5 +224,6 @@ finish a fresh host. Out of the repo, on purpose:
 A reformat loses all four; the password and the VMs are the two that hurt.
 
 No CI, no linters, no `devShell` — this repo is only what the two machines need.
-The one exception is `nix fmt`: the formatter is a flake output, so the tree's
-style is checked by the same nixpkgs that builds it.
+The one exception is `nix fmt`: the formatter is a flake output (`nixfmt-tree`,
+because bare `nixfmt` no longer accepts the directory `nix fmt` hands it), so the
+tree's style is checked by the same nixpkgs that builds it.
