@@ -82,6 +82,41 @@
       shellAliases.copy = "xclip -selection clipboard -i";
     };
 
+    # The idle policy that `xset s 300` + xss-lock used to be. A service rather
+    # than a fourth `&` in the session because the module puts it under
+    # graphical-session.target with `Restart = always`: a dead timer comes back on
+    # its own, and the teardown below has nothing new to reap.
+    #
+    # The exemptions are the whole reason for the change. Nothing in nixpkgs
+    # provides org.freedesktop.ScreenSaver for a bare WM, so a playing video had no
+    # way to say "not now" -- the blank fired mid-video and xss-lock turned that
+    # blank into a lock. `--not-when-fullscreen` reads the _NET_WM_STATE_FULLSCREEN
+    # that dwm sets on a fullscreen client, `--not-when-audio` asks PulseAudio
+    # (PipeWire answers for it). Those two are the only claims here a rebuild cannot
+    # check: shorten `delay` once and watch whether a playing video survives it.
+    #
+    # Durations are seconds of inactivity, not offsets stacked on each other (see
+    # `xidlehook --help`), so the panel timer follows the lock instead of preceding
+    # it. Absolute paths because a user unit does not inherit the session PATH, and
+    # no cancellers: a keystroke must never unlock, and DPMS wakes on input alone.
+    services.xidlehook = {
+      enable = true;
+      not-when-audio = true;
+      not-when-fullscreen = true;
+      detect-sleep = true;
+
+      timers = [
+        {
+          delay = 300;
+          command = "${pkgs.slock}/bin/slock";
+        }
+        {
+          delay = 600;
+          command = "${pkgs.xset}/bin/xset dpms force off";
+        }
+      ];
+    };
+
     xsession = {
       # home-manager writes ~/.xsession, the session wrapper execs it (see
       # `windowManager.command` below for why that is not the other way round).
@@ -107,7 +142,10 @@
         slstatus &
         ${lib.optionalString (config.vars.xrandrArgs != "") "xrandr ${config.vars.xrandrArgs} &"}
         feh --bg-fill "$HOME/.config/wallpapers/bg.png" &
-        xset s 300
+        # Off on purpose -- the service above owns idle now. `-dpms` comes with it:
+        # X's own DPMS cycle is no more aware of a playing video than the screensaver
+        # was, so the panel timeout moved into that chain too.
+        xset s off -dpms
 
         # --transfer-sleep-lock hands logind's sleep inhibitor to the locker, so
         # a lid close locks on the way INTO suspend instead of resuming to a live
@@ -119,6 +157,10 @@
         # so logind falls back to its delay ceiling: lid closes, screen locks,
         # suspend follows a few seconds later. Bounded, and the end state is the
         # one we wanted. Check after the first switch: `systemctl suspend`.
+        #
+        # Sleep only, now. With the X screensaver off, xss-lock's idle half never
+        # fires -- the xidlehook chain does the locking -- and what is left here is
+        # the lid path, which never went through the screensaver anyway.
         xss-lock --transfer-sleep-lock -- slock &
 
         # Not `exec dwm`: home-manager appends its session teardown after this
