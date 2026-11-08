@@ -59,12 +59,26 @@ in
         # here for the same reason the two bus ids are not.
         finegrained = config.hardware.nvidia.open;
       };
-      # powerManagement.enable buys two things nixpkgs wires up: the
-      # nvidia-suspend/resume/hibernate system units, and
-      # NVreg_PreserveVideoMemoryAllocations=1 (hardware/video/nvidia.nix) so the
-      # driver can drop its allocations across S3. That preservation depends on
-      # the persistence daemon, which is a separate switch and off by default --
+      # powerManagement.enable buys NVreg_PreserveVideoMemoryAllocations=1
+      # (hardware/video/nvidia.nix), so the driver can drop its allocations
+      # across S3, plus one of two ways of being told the suspend is coming.
+      # Which one is `powerManagement.kernelSuspendNotifier`, and 26.05 defaults
+      # it to `open && package.version >= 595`: on the open modules the driver
+      # takes the event from a kernel notifier and nixpkgs installs no sleep
+      # units at all, on the blob it falls back to
+      # nvidia-suspend/resume/hibernate.service. So this file buys those units
+      # for nixbox2 (580.178.04, `open = false`) and none for nixbox1
+      # (595.71.05, `open = true`) -- `systemctl list-unit-files 'nvidia*'` there
+      # answers persistenced and the container toolkit, nothing else. The default
+      # reads both halves of that test from the host that imports this file, so
+      # it is left alone rather than pinned here; pin it if a driver bump ever
+      # switches a host over mid-deployment.
+      #
+      # What is the same on both paths: the preservation above needs the
+      # persistence daemon, which is a separate switch and off by default --
       # without it the first resume from a lid close is the interesting one.
+      # Checked on nixbox1: `nvidia-persistenced.service` enabled and
+      # /proc/driver/nvidia/params reads PreserveVideoMemoryAllocations: 1.
       nvidiaPersistenced = true;
       prime = {
         # The iGPU drives the session; `nvidia-offload <cmd>` puts one program on
