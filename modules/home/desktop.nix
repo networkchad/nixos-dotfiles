@@ -97,18 +97,41 @@
     #
     # Durations are seconds of inactivity, not offsets stacked on each other (see
     # `xidlehook --help`), so the panel timer follows the lock instead of preceding
-    # it. Absolute paths because a user unit does not inherit the session PATH, and
-    # no cancellers: a keystroke must never unlock, and DPMS wakes on input alone.
+    # it. No cancellers: a keystroke must never unlock, and DPMS wakes on input
+    # alone.
+    #
+    # `slock` is the wrapper, not `${pkgs.slock}/bin/slock`, and that is not
+    # cosmetic: the store binary is 0555 root:root and authenticates out of
+    # /etc/shadow, which is 0640 root:shadow with the user in no shadow group, so
+    # only /run/wrappers/bin/slock has the setuid bit that makes the read work.
+    # Pointing the timer at the store path locks the screen and then rejects every
+    # password. (`xss-lock ... -- slock` in initExtra gets this right without
+    # meaning to: /run/wrappers/bin is first on the PATH the session inherits.)
+    #
+    # `detect-sleep` is off on purpose: it is the one thing that rewrites the
+    # scheduler's idle baseline while running. xidlehook-core resets every timer to
+    # *now* whenever a sleep lands >=3s late ("has the computer been suspended?"),
+    # and a 300s sleep is long enough to land late -- measured on nixbox1, where
+    # `xprintidle` climbed 144s -> 438s with no input and no child process while
+    # the unit sat in epoll_wait and never spawned slock, and a fresh process with
+    # the same flags but a 30s timer fired at once. The suspend path loses nothing:
+    # a lid close is locked by xss-lock --transfer-sleep-lock below, never by
+    # xidlehook.
+    #
+    # RUST_LOG because the binary links env_logger and every branch of that state
+    # machine logs ("Triggering timer #N", the overshoot line above). A locker that
+    # quietly stops firing is an unlocked laptop, so the reason has to be one
+    # `journalctl --user -u xidlehook` away.
     services.xidlehook = {
       enable = true;
       not-when-audio = true;
       not-when-fullscreen = true;
-      detect-sleep = true;
+      environment.RUST_LOG = "info";
 
       timers = [
         {
           delay = 300;
-          command = "${pkgs.slock}/bin/slock";
+          command = "/run/wrappers/bin/slock";
         }
         {
           delay = 600;
