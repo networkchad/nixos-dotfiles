@@ -7,7 +7,8 @@
 
 # The X/dwm session and the apps that need one; a host imports this and fills in
 # the two facts below. `vars.wallpaper` has no default on purpose: a host that
-# enables the session has to say what it looks like.
+# enables the session has to say what it looks like. ly (../system/desktop.nix)
+# launches what home-manager writes to `~/.xsession`.
 {
   options.vars = {
     wallpaper = lib.mkOption {
@@ -73,21 +74,28 @@
     home.sessionVariables._JAVA_AWT_WM_NONREPARENTING = "1";
 
     programs.bash = {
-      # Both merge into the ones ./base.nix enables: `profileExtra` is
-      # types.lines and `shellAliases` an attrsOf, so splitting the shell config
-      # across the two modules costs nothing.
+      # Both merge into the ones ./base.nix enables: `shellAliases` is an
+      # attrsOf, so splitting the shell config across the two modules costs
+      # nothing. The tty1 autostart that used to live here is gone -- ly starts
+      # the session now, and a `startx` in the login shell would fight it for
+      # the VT.
       shellAliases.copy = "xclip -selection clipboard -i";
-
-      # No display manager: the session starts from the login shell on tty1.
-      profileExtra = ''
-        if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
-          exec startx "$HOME/.xsession"
-        fi
-      '';
     };
 
     xsession = {
+      # home-manager writes ~/.xsession, the session wrapper execs it (see
+      # `windowManager.command` below for why that is not the other way round).
       enable = true;
+
+      # Empty on purpose, and load-bearing. ly launches a session as
+      # `sh -c "<setup_cmd> <session Exec>"` (auth.zig:502), and the setup
+      # command is NixOS's session wrapper, whose last act is
+      # `eval exec ~/.xsession "$@"`. So this script's $1 is the path of the
+      # generated `none+dwm` session script, and home-manager's default
+      # `test -n "$1" && eval "$@"` would run it -- a second dwm, the system
+      # fallback, started the moment the real one exits. With "" the argument is
+      # ignored and dwm stays the one started below.
+      windowManager.command = "";
 
       initExtra = ''
         # No `-d`: that flag double-forks, which takes fcitx5 out of the job list

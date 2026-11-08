@@ -35,8 +35,8 @@
       '';
     };
 
-    # Enabled here; ./desktop.nix adds the tty1 autostart and the
-    # clipboard alias to the same program.
+    # Enabled here; ./desktop.nix adds the clipboard alias to the same program
+    # (and used to add a tty1 `startx` autostart, which ly replaced).
     bash.enable = true;
   };
 }

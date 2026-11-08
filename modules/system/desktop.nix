@@ -1,18 +1,75 @@
 { pkgs, ... }:
 
-# The graphical half of a host: X on tty1, dwm, picom, slock, plus the sound and
-# input-method layers that session needs. A host that never shows a desktop does
-# not import this file -- and the keymap (`services.xserver.xkb.layout`, left to
-# the host file) is the one thing here it has to state.
+# The graphical half of a host: ly on tty1, dwm, picom, slock, plus the sound
+# and input-method layers that session needs. A host that never shows a desktop
+# does not import this file -- and the keymap (`services.xserver.xkb.layout`,
+# left to the host file) is the one thing here it has to state.
 {
   imports = [ ./forks.nix ]; # dwm and slock are the ../../src forks
 
-  # X on tty1, dwm, picom, slock. No display manager: login stays on the tty.
+  # The X server. ly starts it through `services.xserver.displayManager`'s
+  # xserverBin/xserverArgs -- its `x_cmd` is a wrapper around exactly those
+  # (`exec systemd-cat -t xserver-wrapper ${xserverBin} ${xserverArgs}`) -- so
+  # the startx pseudo-DM and the /etc/X11/xinit/xserverrc it existed to provide
+  # both leave with the tty autostart.
   services.xserver = {
     enable = true;
     autoRepeatDelay = 200;
     autoRepeatInterval = 35;
-    displayManager.startx.enable = true;
+
+    # The startx module used to set this. Without it /etc/X11/xorg.conf stops
+    # being written, and the PRIME `BusID`s hardware.nvidia generates land only
+    # in that file -- xorg.conf.d here holds just 00-keyboard.conf and the
+    # evdev/libinput classes (checked on nixbox1) -- so dropping it would have
+    # quietly taken `nvidia-offload` down with it.
+    exportConfiguration = true;
+
+    # Two jobs: the session entry ly lists (see `defaultSession` below) and the
+    # fork on the PATH. Its own start line (`dwm &`, plus
+    # _JAVA_AWT_WM_NONREPARENTING) is only the fallback -- the session wrapper
+    # execs ~/.xsession before it, so the session that actually runs is the one
+    # home-manager writes (../../modules/home/desktop.nix).
+    windowManager.dwm.enable = true;
+  };
+
+  # ly on tty1 replaces the `startx` line the login shell used to run: same VT,
+  # same password, but what it starts is a real logind session (own scope,
+  # XDG_SESSION_TYPE=x11, PAM service `ly`) instead of X inside the getty
+  # session, and quitting dwm returns to the greeter instead of a login prompt.
+  #
+  # `services.displayManager.autoLogin` stays off on purpose: the login password
+  # is what stands between a closed lid and the desktop, and that is the one
+  # property the tty autostart had which a display manager gives up for free.
+  services.displayManager = {
+    ly = {
+      enable = true;
+
+      settings = {
+        # ly 1.4's username box is not a text field: `UserList` is a
+        # CyclableLabel over getAllUsernames() -- every uid inside login.defs'
+        # range, plus root always -- so a name is always on screen and the list
+        # is not filterable. What `save = false` does buy: the box no longer
+        # opens on the last user (and the session they last picked), and ly
+        # stops writing /etc/ly/save.txt, which is exactly that -- last username
+        # plus session index, in the clear, under /etc.
+        save = false;
+
+        # The "Shell" row is not a shell on NixOS. ly runs
+        # `$SHELL -c "<setup_cmd> <shell>"` for it (auth.zig:557) and
+        # `setup_cmd` is this file's session wrapper, whose
+        # `test -x ~/.xsession` branch then execs the dwm session. So the row
+        # would be a second, misleading dwm entry; a real shell is Ctrl+Alt+F2
+        # -- logind instantiates autovt@tty2 -> a getty that ly does not own
+        # (its unit only conflicts with autovt@tty1) and that works with X and
+        # with ly themselves wedged.
+        shell = false;
+      };
+    };
+
+    # The .desktop entry ly offers. The module that generates those names it
+    # "<desktopManager>+<windowManager>", so this is the one dwm registers; a
+    # typo here is an eval error, not a greeter with an empty list.
+    defaultSession = "none+dwm";
   };
 
   # Manuals are the largest thing in the closure that a dwm session never reads:
@@ -84,8 +141,7 @@
     HandleLidSwitchDocked = "ignore";
   };
 
-  # dwm is on the PATH because home-manager's ~/.xsession runs it. Not
-  # services.xserver.windowManager.dwm: that only registers a display-manager
-  # session, which the startx pseudo-DM never reads.
-  environment.systemPackages = [ pkgs.dwm ];
+  # dwm on the PATH rides along with services.xserver.windowManager.dwm above
+  # (`environment.systemPackages = [ cfg.package ]`, and `cfg.package` is the
+  # overlaid fork), so nothing to repeat here.
 }

@@ -17,8 +17,8 @@
   services.xserver.xkb.layout = "jp";
 
   # The console gets the same layout as X. This machine is used on the tty
-  # before startx -- the LUKS prompt and the login prompt are otherwise US while
-  # the session is JP -- and so is every Ctrl+Alt+F2 rescue.
+  # before the session -- the LUKS prompt and the login prompt are otherwise US
+  # while the session is JP -- and so is every Ctrl+Alt+F2 rescue.
   console.useXkbConfig = true;
 
   # lspci on this board: iGPU on bus 0, dGPU on bus 1.
