@@ -212,6 +212,25 @@ same content `--flake .` sees.
 
 `nix.gc` runs weekly with 14-day retention; by hand: `sudo nix-collect-garbage -d`.
 
+### Updating: two nixpkgs inputs, and they do not move together
+
+`flake.lock` pins two revisions. `opencode` is the only package built from the
+second (`pkgsUnstable` in `flake.nix`, used by `modules/home/base.nix`) because
+`nixos-26.05` carries a release a major behind unstable's; it deliberately does
+not `follows = nixpkgs`, or the pin would drag it back.
+
+```sh
+nix flake update nixpkgs-unstable   # opencode alone; the system does not move
+nix flake update nixpkgs            # updates inside nixos-26.05 (home-manager follows it)
+nix flake update                    # both -- only when you mean it
+```
+
+One input per commit, so `git log` names the bump that broke something.
+`--commit-lock-file` does the update and the commit in one step with nix's own
+input diff as the message; by hand it is `git diff flake.lock` (`oldRev` →
+`rev`). Nothing is installed until `rebuild`, and a bad bump is
+`sudo nixos-rebuild --rollback` or `git checkout HEAD~1 -- flake.lock` + rebuild.
+
 ## State this repo does not own
 
 Nothing here holds a secret, which also means `nixos-rebuild` alone does not

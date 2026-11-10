@@ -1,5 +1,6 @@
 {
   pkgs,
+  pkgsUnstable,
   lib,
   config,
   hostName,
@@ -23,6 +24,12 @@
     uv
     devenv
     pi-coding-agent
+
+    # The only package in the tree outside the pinned revision: it moves weekly
+    # and nixos-26.05 lags it by a major version (1.15.x against 2.2.x), so it
+    # comes from nixpkgs-unstable -- `pkgsUnstable` in ../../flake.nix, and
+    # `nix flake update nixpkgs-unstable` bumps it without touching the system.
+    pkgsUnstable.opencode
   ];
 
   programs = {

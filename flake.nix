@@ -6,11 +6,20 @@
 
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    # Deliberately not `follows = nixpkgs`: this is the one package set that has
+    # to float, for `opencode` alone (26.05 carries 1.15.x, unstable 2.2.x).
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   };
 
   # The host table and the nixosSystem factory; no config here.
   outputs =
-    { nixpkgs, home-manager, ... }:
+    {
+      nixpkgs,
+      nixpkgs-unstable,
+      home-manager,
+      ...
+    }:
     let
       inherit (nixpkgs) lib;
 
@@ -61,6 +70,9 @@
                 # half so a home module can name the machine it is built for.
                 extraSpecialArgs = {
                   inherit hostName;
+                  # The second, floating package set, handed to the user half only
+                  # -- see ../../modules/home/base.nix for what uses it.
+                  pkgsUnstable = nixpkgs-unstable.legacyPackages.${system};
                 };
                 users = lib.genAttrs users (username: {
                   home.username = username;
