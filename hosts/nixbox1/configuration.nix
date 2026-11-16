@@ -5,6 +5,7 @@
 # ./hardware-configuration.nix.
 {
   imports = [
+    ../../modules/system/btrfs.nix
     ../../modules/system/desktop.nix
     ../../modules/system/network.nix
     ../../modules/system/power.nix

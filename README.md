@@ -16,6 +16,7 @@ flake.nix                     host table + nixosSystem factory; no config here
 modules/
   system/
     base.nix                  every host (flake imports it): boot, nix, users, tz
+    btrfs.nix                 zstd compression on /, /nix, /home (btrfs hosts)
     desktop.nix               ly + X on tty1, dwm/picom/slock, pipewire, fcitx5, lid
     forks.nix                 the src/ overlay, pulled in by desktop.nix
     network.nix               NetworkManager, tailscale, firewall trust
