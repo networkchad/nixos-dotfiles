@@ -21,6 +21,7 @@ modules/
     forks.nix                 the src/ overlay, pulled in by desktop.nix
     network.nix               NetworkManager, tailscale, firewall trust
     power.nix                 thermald, the power-profile switch, upower (laptops)
+    memory.nix                zram RAM cushion (swapless laptops)
     docker.nix                daemon, group, compose CLI
     libvirtd.nix              qemu + virt-manager + virbr0 (nixbox1)
     nvidia.nix                PRIME offload + the unfree grant (NVIDIA hosts)
