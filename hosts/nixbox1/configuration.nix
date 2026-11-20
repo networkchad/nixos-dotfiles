@@ -11,6 +11,7 @@
     ../../modules/system/power.nix
     ../../modules/system/memory.nix
     ../../modules/system/docker.nix
+    ../../modules/system/k8s.nix
     ../../modules/system/libvirtd.nix
     ../../modules/system/nvidia.nix
   ];
