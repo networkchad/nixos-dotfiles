@@ -5,7 +5,7 @@
 {
   environment.systemPackages = with pkgs; [
     kubectl
-    helm
+    kubernetes-helm
     k9s
     kind
   ];
