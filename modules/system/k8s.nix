@@ -13,4 +13,9 @@
     sops
     age
   ];
+
+  # Nodes hand each other pod traffic sourced from the pod CIDR, which this host has no
+  # route to, and strict reverse-path filtering drops that: pods on one node never reach
+  # CoreDNS on another, so flux can't even resolve github.com. Loose is still a filter.
+  networking.firewall.checkReversePath = "loose";
 }
