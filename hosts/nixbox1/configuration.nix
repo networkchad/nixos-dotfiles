@@ -30,14 +30,4 @@
 
   # Turing and newer, so the open modules at the kernel's default generation.
   hardware.nvidia.open = true;
-
-  # The cluster's front door: every route behind the Gateway shares MetalLB's
-  # first address on the kind bridge. Confirm it after a fresh cluster with
-  # `kubectl -n web get gateway web` -- the pool is .240-.250.
-  networking.hosts."172.18.0.240" = [
-    "homelab.internal"
-    "auth.homelab.internal"
-    "headlamp.homelab.internal"
-    "grafana.homelab.internal"
-  ];
 }
