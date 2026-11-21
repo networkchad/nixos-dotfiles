@@ -1,16 +1,14 @@
 { lib, ... }:
 
-# All four ../../src forks, defined once here and pulled in by ./desktop.nix,
-# which is the module that needs them: dwm and slock from the system side, st and
-# slstatus from the home side (home-manager's `useGlobalPkgs` hands it this same
-# overlaid package set). The per-host files never mention a fork.
+# The four ../../src forks, defined once here and pulled in by ./desktop.nix, the
+# module that needs them: dwm and slock from the system side, st and slstatus from
+# the home side (`useGlobalPkgs` hands it this same overlaid package set).
 #
-# Upstream's `patches` are dropped: the hunks are already in the tree, and
-# upstream's list applies to the release tarball these trees were forked from
-# (../../patches/README.md pins each base commit and lists what is actually
-# local). `version` is read from src/<name>/config.mk because `old.version` would
-# name a tree this derivation does not build, and `-local` keeps a fork rebuild
-# visible in nixos-rebuild output.
+# Upstream's `patches` are dropped: the hunks are already in the tree and upstream's
+# list applies to the release tarball these were forked from. `version` is read from
+# src/<name>/config.mk, because `old.version` would name a tree this derivation does
+# not build, and `-local` keeps a fork rebuild visible in nixos-rebuild output. See
+# ../../patches/README.md for the base commits.
 {
   nixpkgs.overlays = [
     (
@@ -33,10 +31,9 @@
           in
           prev.${name}.overrideAttrs (_: {
             version = "${lib.trim (builtins.head (builtins.match "VERSION = +(.*)" line))}-local";
-            # Exactly what the Makefile reads: the sources, the two config files
-            # it builds against, and the man page (+ st's terminfo) it installs.
-            # LICENSE, README, FAQ and src/slstatus/scripts stay in the repo but
-            # out of the derivation, so editing one cannot rebuild a fork.
+            # Exactly what the Makefile reads -- sources, the two config files, the
+            # man page (+ st's terminfo). LICENSE, README, FAQ and scripts/ stay in
+            # the repo but out of the derivation, so editing one cannot rebuild a fork.
             src = lib.cleanSourceWith {
               src = ../../src + /${name};
               filter =

@@ -1,8 +1,7 @@
 { config, ... }:
 
-# One line per service this machine runs; the shared core is imported by the
-# flake (../../modules/system/base.nix) and the board facts live in
-# ./hardware-configuration.nix.
+# One line per service this machine runs; the shared core is imported by the flake
+# and the board facts live in ./hardware-configuration.nix.
 {
   imports = [
     ../../modules/system/btrfs.nix
@@ -19,9 +18,8 @@
   # The keymap the desktop module's X server uses.
   services.xserver.xkb.layout = "jp";
 
-  # The console gets the same layout as X. This machine is used on the tty
-  # before the session -- the LUKS prompt and the login prompt are otherwise US
-  # while the session is JP -- and so is every Ctrl+Alt+F2 rescue.
+  # The console gets X's layout too: the LUKS and login prompts, and every
+  # Ctrl+Alt+F2 rescue, are otherwise US while the session is JP.
   console.useXkbConfig = true;
 
   # lspci on this board: iGPU on bus 0, dGPU on bus 1.
@@ -30,7 +28,6 @@
     nvidiaBusId = "PCI:1:0:0";
   };
 
-  # Open modules: right for this GPU (Turing and newer), at the kernel's default
-  # driver generation.
+  # Turing and newer, so the open modules at the kernel's default generation.
   hardware.nvidia.open = true;
 }

@@ -8,15 +8,13 @@
 let
   cfg = config.video.prime;
 in
-# PRIME offload, shared by every NVIDIA host. Two things stay per-host: which
-# driver generation to use (`open = true` for Turing and newer, otherwise a
-# pinned `package`, since the open modules do not support pre-Turing GPUs) and
-# the two PCI bus ids below -- those are facts about the board, and sharing them
-# here because both current machines happen to agree would leave a third one
-# with a black screen at boot.
+# PRIME offload, shared by every NVIDIA host. Two things stay per-host: the driver
+# generation (`open = true` for Turing and newer, otherwise a pinned `package`,
+# since the open modules do not support pre-Turing) and the two PCI bus ids -- facts
+# about the board that would leave a third machine black-screened if they were
+# shared just because the current two agree.
 #
-# This module is also the only thing in the tree that needs an unfree grant, so
-# the grant lives here: a host that does not import it asks for none.
+# This is also the only module that needs an unfree grant, so the grant lives here.
 {
   options.video.prime = {
     intelBusId = lib.mkOption {
@@ -34,15 +32,10 @@ in
 
   config = {
     # The unfree set is exactly the NVIDIA stack -- a prefix, because the driver
-    # arrives under several names (nixbox1's closure alone carries nvidia-x11,
-    # nvidia-open, nvidia-settings, nvidia-x11-bin, nvidia-container-toolkit,
-    # nvidia-vaapi-driver) and which of them exist changes between nixpkgs
-    # releases. Checked both ways: comment this line out and evaluating nixbox1
-    # dies on "Refusing to evaluate package 'nvidia-x11-…' because it has an
-    # unfree license"; with only this prefix, both systems evaluate, which also
-    # proves nothing else needs the grant. brave is not in it -- MPL-2.0,
-    # `meta.unfree = false` -- despite what this line used to comment.
-    # `useGlobalPkgs` shares the config with home-manager.
+    # arrives under several names (nvidia-x11, nvidia-open, nvidia-settings,
+    # nvidia-container-toolkit, ...) and which exist changes between releases.
+    # Nothing else needs the grant; brave is MPL-2.0. `useGlobalPkgs` shares this
+    # config with home-manager.
     nixpkgs.config.allowUnfreePredicate = pkg: lib.hasPrefix "nvidia" (lib.getName pkg);
 
     services.xserver.videoDrivers = [ "nvidia" ];
@@ -51,34 +44,22 @@ in
       modesetting.enable = true;
       powerManagement = {
         enable = true;
-        # Runtime D3 driven by the driver itself is a feature of the *open*
-        # modules; on a pre-Turing board pinned to the proprietary blob the
-        # `NVreg_DynamicPowerManagement=0x02` module parameter is accepted and
-        # ignored. So this one line of the PRIME shape does not travel, and it
-        # reads the host's own `hardware.nvidia.open` instead of being stated
-        # here for the same reason the two bus ids are not.
+        # Runtime D3 driven by the driver is a feature of the *open* modules; on the
+        # proprietary blob the parameter is accepted and ignored. So this line of the
+        # PRIME shape does not travel either, and reads the host's own `open`.
         finegrained = config.hardware.nvidia.open;
       };
-      # powerManagement.enable buys NVreg_PreserveVideoMemoryAllocations=1
-      # (hardware/video/nvidia.nix), so the driver can drop its allocations
-      # across S3, plus one of two ways of being told the suspend is coming.
-      # Which one is `powerManagement.kernelSuspendNotifier`, and 26.05 defaults
-      # it to `open && package.version >= 595`: on the open modules the driver
-      # takes the event from a kernel notifier and nixpkgs installs no sleep
+      # Buys NVreg_PreserveVideoMemoryAllocations=1, plus one of two ways of being
+      # told the suspend is coming. Which one is `kernelSuspendNotifier`, and 26.05
+      # defaults it to `open && package.version >= 595`: on the open modules the
+      # driver takes the event from a kernel notifier and nixpkgs installs no sleep
       # units at all, on the blob it falls back to
-      # nvidia-suspend/resume/hibernate.service. So this file buys those units
-      # for nixbox2 (580.178.04, `open = false`) and none for nixbox1
-      # (595.71.05, `open = true`) -- `systemctl list-unit-files 'nvidia*'` there
-      # answers persistenced and the container toolkit, nothing else. The default
-      # reads both halves of that test from the host that imports this file, so
-      # it is left alone rather than pinned here; pin it if a driver bump ever
-      # switches a host over mid-deployment.
+      # nvidia-suspend/resume/hibernate.service. Left at the default so it follows
+      # whichever driver the host chose; pin it only if a bump ever switches a host
+      # over mid-deployment.
       #
-      # What is the same on both paths: the preservation above needs the
-      # persistence daemon, which is a separate switch and off by default --
-      # without it the first resume from a lid close is the interesting one.
-      # Checked on nixbox1: `nvidia-persistenced.service` enabled and
-      # /proc/driver/nvidia/params reads PreserveVideoMemoryAllocations: 1.
+      # The same on both paths: the preservation needs the persistence daemon, which
+      # is a separate switch and off by default.
       nvidiaPersistenced = true;
       prime = {
         # The iGPU drives the session; `nvidia-offload <cmd>` puts one program on
@@ -91,14 +72,12 @@ in
       };
     };
 
-    # Hardware video decode for the GPU that actually drives the session: the
-    # offload shape puts the desktop on the iGPU, but only the NVIDIA side of
-    # VA-API arrives by itself (the graphics module adds nvidia-vaapi-driver);
-    # with nothing for Intel, brave/LibreWolf/mpv decode in software on the
-    # panel's own GPU. Keyed off the host's own `open` the way `finegrained`
-    # is -- which is also where the call gets made that nixbox2 (legacy blob, no
-    # browser video on it) goes without. Check with `vainfo`: it lists the
-    # driver, the VA-API version and the entrypoints a browser needs.
+    # Hardware decode for the GPU that actually drives the session. Offload puts the
+    # desktop on the iGPU, but only the NVIDIA side of VA-API arrives by itself, so
+    # with nothing for Intel the browsers decode in software on the panel's own GPU.
+    # Keyed off the host's `open` the way `finegrained` is -- which is also where the
+    # call gets made that nixbox2 (legacy blob) goes without. `vainfo` lists what a
+    # browser needs.
     hardware.graphics.extraPackages = lib.optionals config.hardware.nvidia.open (
       with pkgs;
       [

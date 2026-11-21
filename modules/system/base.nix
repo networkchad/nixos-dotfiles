@@ -6,21 +6,18 @@
   ...
 }:
 
-# The core every host in the host table gets, imported by the flake. Every other
-# file in this directory is a service a host picks by importing it: a third
-# machine that is a headless box simply does not import ./desktop.nix. Per-host
-# facts live in ../../hosts/<name>/, the user half in ../home/base.nix.
+# The core every host gets, imported by the flake. Every other file here is a
+# service a host picks by importing it, and per-host facts live in
+# ../../hosts/<name>/ -- so a headless box simply does not import ./desktop.nix.
 {
   networking.hostName = hostName;
 
   boot.loader = {
     systemd-boot = {
       enable = true;
-      # Both ESPs are the installer's 1 GiB vfat partition and every generation
-      # writes a kernel and an initrd into it. The default `null` is not "no
-      # limit until the GC runs": it is no limit at all, and the GC only frees
-      # a generation after the 14 days -- so a fortnight of rebuilds is what
-      # fills /boot, at the one moment when a rollback would be useful.
+      # The installer's 1 GiB ESP, and `null` means no limit at all -- the GC only
+      # frees a generation after 14 days, so a fortnight of rebuilds fills /boot at
+      # the one moment a rollback would be useful.
       configurationLimit = 6;
     };
     efi.canTouchEfiVariables = true;
@@ -40,11 +37,8 @@
     options = "--delete-older-than 14d";
   };
 
-  # Every name in the host table, and only the group that is always right. The
-  # modules that need more append their own (networkmanager in ./network.nix,
-  # docker in ./docker.nix, libvirtd in ./libvirtd.nix), so nothing here has to
-  # know which services a machine runs -- and a host that runs neither asks for
-  # a group nobody creates.
+  # Only the group that is always right. The modules needing more append their own
+  # (networkmanager, docker, libvirtd), so nothing here knows what a host runs.
   users.users = lib.genAttrs users (_: {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
@@ -56,15 +50,13 @@
 
   programs.nix-ld.enable = true; # binaries installed outside Nix find their libs
 
-  # The two things worth having on a fresh tty before anything is installed.
+  # Handy on a fresh tty, before anything is installed.
   environment.systemPackages = with pkgs; [
     wget
     git
   ];
 
-  # Every host in the table was installed on the release this flake pins. A host
-  # carried over from an older one says so in its own configuration.nix --
-  # mkDefault so that statement is a plain assignment and not a `lib.mkForce`
-  # fight with this file.
+  # Every host was installed on the release this flake pins; mkDefault so an older
+  # host overrides it with a plain assignment in its own configuration.nix.
   system.stateVersion = lib.mkDefault "26.05";
 }

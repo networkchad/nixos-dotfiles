@@ -7,8 +7,7 @@
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    # Deliberately not `follows = nixpkgs`: this is the one package set that has
-    # to float, for `opencode` alone (26.05 carries 1.15.x, unstable 2.2.x).
+    # Not `follows = nixpkgs`: the one set that has to float, for `opencode` alone.
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   };
 
@@ -23,11 +22,8 @@
     let
       inherit (nixpkgs) lib;
 
-      # The host table: the only place a hostname or a username appears. The
-      # architecture is repeated inside each generated
-      # ./hosts/<name>/hardware-configuration.nix (`nixpkgs.hostPlatform`), which
-      # nixos-generate-config owns and nobody hand-edits. Each entry needs
-      # ./hosts/<name>/{configuration,home,hardware-configuration}.nix; a missing
+      # The only place a hostname or a username appears. Each entry needs
+      # ./hosts/<name>/{configuration,home,hardware-configuration}.nix, and a missing
       # file or key fails evaluation rather than importing nothing.
       hosts = {
         nixbox1 = {
@@ -41,10 +37,8 @@
         };
       };
 
-      # One host table entry -> one nixosSystem. Identity is passed to every
-      # module as specialArgs. Each host gets the two `base` modules and its own
-      # two files; everything else it runs is imported by name in
-      # ./hosts/<name>/configuration.nix from ./modules/{system,home}/.
+      # One host table entry -> one nixosSystem. Identity reaches every module as
+      # specialArgs; everything a host runs it imports by name itself.
       mkSystem =
         hostName:
         { system, users }:
@@ -59,19 +53,16 @@
 
             home-manager.nixosModules.home-manager
             {
-              # Both halves of the profile are assembled here, so no module names
-              # a user or a machine.
+              # Both halves of the profile are assembled here, so no module names a
+              # user or a machine.
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
                 backupFileExtension = "backup";
-                # The nixosSystem specialArgs do not reach the per-user module
-                # system; this is the same host table entry, handed to the home
-                # half so a home module can name the machine it is built for.
+                # The specialArgs above stop at the system layer.
                 extraSpecialArgs = {
                   inherit hostName;
-                  # The second, floating package set, handed to the user half only
-                  # -- see ../../modules/home/base.nix for what uses it.
+                  # For the user half only -- ./modules/home/base.nix says what uses it.
                   pkgsUnstable = nixpkgs-unstable.legacyPackages.${system};
                 };
                 users = lib.genAttrs users (username: {
@@ -90,12 +81,10 @@
     {
       nixosConfigurations = lib.mapAttrs mkSystem hosts;
 
-      # `nix fmt` using the nixpkgs this lock pins, in the style the tree is
-      # already written in. `nixfmt-tree`, not bare `nixfmt`: `nix fmt` hands the
-      # formatter the flake directory and nixfmt 1.5 no longer takes one (it
-      # falls back to stdin and dies on "unexpected end of input", which is what
-      # `nix fmt` did on this tree until now). nixfmt-tree walks the tree itself,
-      # and `nix fmt -- --fail-on-change` is a gate CI can use.
+      # `nix fmt` on the nixpkgs this lock pins, in the style the tree is written in.
+      # `nixfmt-tree`, not bare `nixfmt`: `nix fmt` hands the formatter the flake
+      # directory and nixfmt 1.5 no longer takes one. `nix fmt -- --fail-on-change`
+      # is the gate CI uses.
       formatter = lib.genAttrs (lib.unique (lib.mapAttrsToList (_: h: h.system) hosts)) (
         system: nixpkgs.legacyPackages.${system}.nixfmt-tree
       );
