@@ -19,6 +19,7 @@
   home.packages = with pkgs; [
     fastfetch
     dysk
+    tree
     uv
     devenv
 
