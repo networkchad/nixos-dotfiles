@@ -8,5 +8,6 @@
     kubernetes-helm
     k9s
     kind
+    fluxcd
   ];
 }
