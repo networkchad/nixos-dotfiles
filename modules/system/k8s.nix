@@ -1,8 +1,7 @@
 { pkgs, ... }:
 
-# The cluster CLIs, plus `kind`, whose clusters are containers -- import
-# ./docker.nix alongside this. sops decrypts the ciphertext the cluster repo
-# commits; the private half lives in ~/.config/sops/age/keys.txt.
+# Kubernetes CLIs; kind also needs ./docker.nix. SOPS uses the private age key at
+# ~/.config/sops/age/keys.txt.
 {
   environment.systemPackages = with pkgs; [
     kubectl
@@ -14,8 +13,7 @@
     age
   ];
 
-  # Nodes hand each other pod traffic sourced from the pod CIDR, which this host has no
-  # route to, and strict reverse-path filtering drops that: pods on one node never reach
-  # CoreDNS on another, so flux can't even resolve github.com. Loose is still a filter.
+  # Loose reverse-path filtering lets remote pod CIDRs reach CoreDNS across nodes;
+  # strict mode drops that traffic as unrouteable.
   networking.firewall.checkReversePath = "loose";
 }

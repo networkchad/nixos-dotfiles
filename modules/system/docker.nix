@@ -5,8 +5,9 @@
   ...
 }:
 
-# The daemon, the group that may talk to it, and the compose CLI. On GPU hosts
-# ./nvidia.nix additionally lets containers reach the GPU.
+# Docker, Compose, and daemon access. GPU access comes from ./nvidia.nix.
+# Docker's NAT rules bypass normal input-filter assumptions: bind development-only
+# published ports to 127.0.0.1 or a specific Tailscale address.
 {
   virtualisation.docker.enable = true;
 

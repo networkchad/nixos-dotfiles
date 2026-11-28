@@ -6,19 +6,23 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
-      - uses: cachix/install-nix-action@v31
+      - uses: cachix/install-nix-action@382a9ed9481c7c1f94f68b72ef105b3417c73877 # v32.1.0
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
 
-      # The same checks to run by hand: the format gate, then both hosts evaluate.
-      # Eval only -- no builds, no secrets, nothing installed.
+      # The flake checks evaluate every host, compile the custom forks, and lint
+      # the status script and this workflow.
       - run: nix fmt -- --fail-on-change
-      - run: nix eval ".#nixosConfigurations.nixbox1.config.system.build.toplevel.drvPath"
-      - run: nix eval ".#nixosConfigurations.nixbox2.config.system.build.toplevel.drvPath"
+      - run: nix flake check -L

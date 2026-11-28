@@ -1,12 +1,11 @@
 {
   lib,
   users,
-  config,
   ...
 }:
 
-# NetworkManager, with the group its users join declared next to the module that
-# creates it, plus a tailscale interface that is always up.
+# NetworkManager plus tailscaled. Tailnet membership is transport, not permission
+# to reach every host listener; services must open their own ports.
 {
   networking.networkmanager.enable = true;
 
@@ -17,14 +16,8 @@
   services.tailscale = {
     enable = true;
 
-    # The underlay direction: 41641 is the wireguard port a peer hole-punches
-    # toward, and those packets arrive on the physical NIC, never on tailscale0.
-    # Blocked, a connection still comes up -- through a DERP relay, not directly.
+    # Permit direct WireGuard connections on the physical NIC instead of DERP relays.
     openFirewall = true;
   };
 
-  # The overlay direction: inbound on tailscale0, so a peer reaching a service here
-  # is never matched against the per-port list. Drop this and ssh-over-tailscale
-  # stops working.
-  networking.firewall.trustedInterfaces = [ config.services.tailscale.interfaceName ];
 }

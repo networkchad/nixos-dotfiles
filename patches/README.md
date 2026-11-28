@@ -1,79 +1,62 @@
 # Vendored fork provenance
 
-Every file under `../src/<pkg>` is upstream suckless code except the files listed
-here. The claims are mechanical, not from memory -- [Verify](#verify) regenerates
-them.
+`../src/<pkg>` contains upstream suckless Git code plus these recorded deltas. Verification covers every non-config file; local configuration and `slstatus/scripts/` are reviewed separately.
 
-| fork       | upstream base                                     | local delta                                                     |
-| ---------- | ------------------------------------------------- | --------------------------------------------------------------- |
-| `dwm`      | `44dbc68` (2026-03-13) `buttonpress: fix status…` | `dwm/uselessgap.diff`, `config.def.h`                             |
-| `st`       | `688f70a` (2026-01-14) `st: guard tsetdirt()…`     | `st/alpha.diff`, `st/scrollback.diff`, `st/scrollback-mouse.diff`, `config.def.h` |
-| `slock`    | `3791a99` (2025-08-16) `add a comment for the ctrl-u clear field combo` | `config.def.h` only                    |
-| `slstatus` | `614c275` (2026-02-12) `license: bump copyright year` | `config.def.h` and `scripts/` (this directory is ours)       |
+| Fork | Base | Local delta |
+| --- | --- | --- |
+| `dwm` | `44dbc68` | `dwm/uselessgap.diff`, `config.def.h` |
+| `st` | `688f70a` | `st/alpha.diff`, `st/scrollback.diff`, `st/scrollback-mouse.diff`, `config.def.h` |
+| `slock` | `3791a99` | `config.def.h` |
+| `slstatus` | `614c275` | `config.def.h`, `scripts/` |
 
-Bases are upstream git (`https://git.suckless.org/<pkg>`), not release tarballs, so
-a base is *newer* than the `VERSION` in `src/<pkg>/config.mk` and than what nixpkgs
-packages (dwm: base 6.8+, config.mk 6.8, nixpkgs 6.6). That is why the overlay in
-`../modules/system/forks.nix` sets `patches = [ ]` -- the hunks below are already in
-`../src`, and upstream's own list targets the tarball.
+Bases come from `https://git.suckless.org/<pkg>`, not release tarballs. They can therefore be newer than `VERSION` in `config.mk` and nixpkgs' release. The overlay clears inherited nixpkgs patches because those target its release tarball while these trees already contain the recorded hunks.
 
-## What each patch does
+## Patches and local deviations
 
-* `dwm/uselessgap.diff` -- real gaps between tiled windows (`gappx`,
-  `config.def.h:5`), removing border+gap for monocle/single client.
-  <https://dwm.suckless.org/patches/uselessgaps/> (v2, by cirala).
-* `st/alpha.diff` -- translucent background (`alpha`, `config.def.h:97`), locally
-  `0.7` where the upstream patch ships `0.8`.
-  <https://st.suckless.org/patches/alpha/>
-* `st/scrollback.diff` -- history buffer + `kscrollup`/`kscrolldown`.
-  <https://st.suckless.org/patches/scrollback/>
-* `st/scrollback-mouse.diff` -- **`config.def.h` only**, so a config line, not code.
-  The local line deviates on purpose: `config.def.h:182` binds `ControlMask` (not the
-  patch's `ShiftMask`) and steps 5 lines instead of 1.
-  <https://st.suckless.org/patches/scrollbackmouse/>
+- `dwm/uselessgap.diff`: tiled gaps (`gappx`), without border+gap for monocle/single-client layouts. [Upstream patch](https://dwm.suckless.org/patches/uselessgaps/) (v2, cirala).
+- `st/alpha.diff`: translucent background; local `alpha` is `0.7`, not the patch's `0.8`. [Upstream patch](https://st.suckless.org/patches/alpha/).
+- `st/scrollback.diff`: history buffer and `kscrollup`/`kscrolldown`. [Upstream patch](https://st.suckless.org/patches/scrollback/).
+- `st/scrollback-mouse.diff`: changes only `config.def.h`. The local binding uses `ControlMask`, not `ShiftMask`, and scrolls five lines instead of one. [Upstream patch](https://st.suckless.org/patches/scrollbackmouse/).
 
-## Things that look local but are not
+Do not re-add these upstream-base features as local patches:
 
-Do not "re-add" these as patches; they are upstream code carried by the base.
-
-* `dwm/dwm.c:443` `+ lrpad - 2` in `buttonpress` -- the status area's click target,
-  which is the base commit's own subject line.
-* `dwm/dwm.c` `getatomprop`/`getwindowtype` `format == 32` checks, `setfocus` always
-  publishing `_NET_ACTIVE_WINDOW`, `movemouse`-then-fullscreen resize.
-* `dwm/dwm.c` `refreshrate` (`config.def.h:39`) -- throttles move/resize.
-* `slock/slock.c` ctrl-U clearing the password.
-* `slstatus/util.c` `lscanf()`, and the `battery.c`/`ram.c`/`volume.c`/`wifi.c`
-  rewrites around it.
+- dwm's `buttonpress` status-area adjustment, `getatomprop`/`getwindowtype` 32-bit checks, `_NET_ACTIVE_WINDOW` handling, move-then-fullscreen resize, and `refreshrate`.
+- slock's Ctrl-U password clearing.
+- slstatus's `lscanf()` and the battery/RAM/volume/Wi-Fi code built around it.
 
 ## Verify
 
-```sh
-R=$PWD; cd $(mktemp -d)
-for p in dwm st slock slstatus; do git clone -q https://git.suckless.org/$p; done
-
-# 1. every file the fork does NOT patch is byte-identical to the base commit
-git -C slstatus archive 614c275 | tar x -C /tmp/base-slstatus
-diff -r /tmp/base-slstatus $R/src/slstatus -x config.def.h -x scripts   # expect: no output
-
-# 2. every patched file equals base + the patch, byte-for-byte
-mkdir /tmp/p && git -C dwm archive 44dbc68 | tar x -C /tmp/p
-patch -s -d /tmp/p -p1 -i $R/patches/dwm/uselessgap.diff
-diff /tmp/p/dwm.c $R/src/dwm/dwm.c                                      # expect: no output
-```
-
-## Rebasing a fork onto newer upstream
+From the repository root:
 
 ```sh
-cd $(mktemp -d) && git clone -q https://git.suckless.org/dwm
-base=44dbc68                                  # the fork's current base
-git -C dwm log --oneline $base..HEAD          # what moved upstream
-git -C dwm archive -o /tmp/dwm-new.tar HEAD   # HEAD, or a dated tag if you prefer
-tar xf /tmp/dwm-new.tar
-for p in /path/to/repo/patches/dwm/*.diff; do patch -p1 -i $p; done
-cp /path/to/repo/src/dwm/config.def.h config.def.h   # the local config wins
-cp -r . /path/to/repo/src/dwm/              # drop .git/
+./patches/verify.sh
 ```
 
-Then update this file's table and re-run **Verify**. Expect the suckless patch files
-to need refreshing on every rebase -- they are user-contributed, so they go stale
-against upstream master.
+For all four forks this applies the recorded patches to the recorded base and byte-compares everything except each `config.def.h` and slstatus's top-level `scripts/`. It uses an isolated temporary directory, cleans up on exit, and requires network access plus `git`, `patch`, `tar`, and `diff`.
+
+## Rebase a fork
+
+Run from the repository root. Stage and review the new tree in isolation; this example uses dwm, and `new` can be a commit, tag, or `HEAD`.
+
+```sh
+pkg=dwm
+base=44dbc68                  # current base for this fork
+new=HEAD
+work=$(mktemp -d)
+
+git clone -q "https://git.suckless.org/$pkg" "$work/upstream"
+git -C "$work/upstream" log --oneline "$base..$new"
+mkdir "$work/$pkg"
+git -C "$work/upstream" archive "$new" | tar -x -C "$work/$pkg"
+for p in "$PWD/patches/$pkg/"*.diff; do
+  [ -e "$p" ] || continue    # slock/slstatus have local config only
+  patch -d "$work/$pkg" -p1 -i "$p"
+done
+
+cp "src/$pkg/config.def.h" "$work/$pkg/config.def.h"
+diff -ru "src/$pkg" "$work/$pkg" || true
+```
+
+Review and test the staged tree before copying files from `"$work/$pkg"` into `src/$pkg`, including deleting files dropped upstream. Preserve slstatus's local `scripts/`. Copy from the `git archive` tree, not the clone, so no `.git` directory enters `src/`.
+
+Update the table and `verify.sh` base commit, then run **Verify**. Refresh contributed patches when upstream changes their context.

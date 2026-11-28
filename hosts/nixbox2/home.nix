@@ -1,9 +1,9 @@
-_:
-
-# The session is ../../modules/home/desktop.nix; only the facts differ per host.
-# Built-in panel only here, so no xrandr line: X keeps the panel's preferred mode.
-{
+_: {
   imports = [ ../../modules/home/desktop.nix ];
 
+  # Install-time compatibility baseline, not the current flake release.
+  home.stateVersion = "26.05";
+
+  # Empty xrandrArgs keeps the built-in panel's preferred mode.
   vars.wallpaper = ../../pics/nix-wallpaper-dracula.png;
 }

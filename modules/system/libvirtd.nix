@@ -5,17 +5,16 @@
   ...
 }:
 
-# libvirt + qemu, the manager GUI, the group that may drive the daemon, and trust
-# for the bridge libvirt defines. A host importing nothing here has no `libvirtd`
-# group at all.
-#
-# The default NAT network does need a dnsmasq and this file declares none: the
-# libvirt derivation puts one on the daemon's own PATH (`binPath`, baked into the
-# libvirtd wrapper), so a system-wide copy would be a second one nothing asked for.
+# libvirt, unprivileged QEMU, and virt-manager. The libvirt wrapper already carries
+# dnsmasq for its default NAT network; no system-wide copy is needed.
 {
   virtualisation.libvirtd = {
     enable = true;
-    qemu.package = pkgs.qemu_kvm; # host-passthrough CPU, no emulation targets
+    qemu = {
+      package = pkgs.qemu_kvm; # host-architecture QEMU targets only
+      # A guest escape reaches qemu-libvirtd rather than a root QEMU process.
+      runAsRoot = false;
+    };
   };
 
   programs.virt-manager.enable = true;
@@ -24,5 +23,12 @@
     extraGroups = [ "libvirtd" ];
   });
 
-  networking.firewall.trustedInterfaces = [ "virbr0" ]; # libvirt's bridge
+  # Permit only host-side DHCP/DNS; libvirt owns its NAT and forwarding rules.
+  networking.firewall.interfaces.virbr0 = {
+    allowedTCPPorts = [ 53 ];
+    allowedUDPPorts = [
+      53
+      67
+    ];
+  };
 }

@@ -7,11 +7,11 @@
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    # Not `follows = nixpkgs`: the one set that has to float, for `opencode` alone.
+    # Independent of stable nixpkgs; used only for opencode.
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   };
 
-  # The host table and the nixosSystem factory; no config here.
+  # Host and profile assembly only; service configuration lives in modules/hosts.
   outputs =
     {
       nixpkgs,
@@ -22,9 +22,7 @@
     let
       inherit (nixpkgs) lib;
 
-      # The only place a hostname or a username appears. Each entry needs
-      # ./hosts/<name>/{configuration,home,hardware-configuration}.nix, and a missing
-      # file or key fails evaluation rather than importing nothing.
+      # Each entry requires hosts/<name>/{configuration,home,hardware-configuration}.nix.
       hosts = {
         nixbox1 = {
           system = "x86_64-linux";
@@ -37,8 +35,6 @@
         };
       };
 
-      # One host table entry -> one nixosSystem. Identity reaches every module as
-      # specialArgs; everything a host runs it imports by name itself.
       mkSystem =
         hostName:
         { system, users }:
@@ -53,16 +49,13 @@
 
             home-manager.nixosModules.home-manager
             {
-              # Both halves of the profile are assembled here, so no module names a
-              # user or a machine.
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
                 backupFileExtension = "backup";
-                # The specialArgs above stop at the system layer.
+                # System specialArgs do not cross into Home Manager.
                 extraSpecialArgs = {
                   inherit hostName;
-                  # For the user half only -- ./modules/home/base.nix says what uses it.
                   pkgsUnstable = nixpkgs-unstable.legacyPackages.${system};
                 };
                 users = lib.genAttrs users (username: {
@@ -77,16 +70,49 @@
             }
           ];
         };
+
+      nixosConfigurations = lib.mapAttrs mkSystem hosts;
     in
     {
-      nixosConfigurations = lib.mapAttrs mkSystem hosts;
+      inherit nixosConfigurations;
 
-      # `nix fmt` on the nixpkgs this lock pins, in the style the tree is written in.
-      # `nixfmt-tree`, not bare `nixfmt`: `nix fmt` hands the formatter the flake
-      # directory and nixfmt 1.5 no longer takes one. `nix fmt -- --fail-on-change`
-      # is the gate CI uses.
+      # nixfmt-tree accepts the directory passed by `nix fmt`.
       formatter = lib.genAttrs (lib.unique (lib.mapAttrsToList (_: h: h.system) hosts)) (
         system: nixpkgs.legacyPackages.${system}.nixfmt-tree
       );
+
+      # Reuse the host overlay; flake check also evaluates every host.
+      checks.x86_64-linux =
+        let
+          pkgs = nixosConfigurations.nixbox1.pkgs;
+        in
+        {
+          inherit (pkgs)
+            dwm
+            st
+            slock
+            slstatus
+            ;
+
+          slstatus-status-shellcheck =
+            pkgs.runCommand "slstatus-status-shellcheck"
+              {
+                nativeBuildInputs = [ pkgs.shellcheck ];
+              }
+              ''
+                shellcheck ${./src/slstatus/scripts/status.sh}
+                touch $out
+              '';
+
+          workflow-actionlint =
+            pkgs.runCommand "workflow-actionlint"
+              {
+                nativeBuildInputs = [ pkgs.actionlint ];
+              }
+              ''
+                actionlint ${./.github/workflows/check.yml}
+                touch $out
+              '';
+        };
     };
 }

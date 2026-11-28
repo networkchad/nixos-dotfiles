@@ -1,7 +1,6 @@
-{ config, ... }:
+{ ... }:
 
-# One line per service this machine runs; the shared core is imported by the flake
-# and the board facts live in ./hardware-configuration.nix.
+# Host service selection and hardware/session deltas.
 {
   imports = [
     ../../modules/system/btrfs.nix
@@ -15,19 +14,22 @@
     ../../modules/system/nvidia.nix
   ];
 
-  # The keymap the desktop module's X server uses.
+  # Install-time compatibility baseline, not the current flake release.
+  system.stateVersion = "26.05";
+
   services.xserver.xkb.layout = "jp";
 
-  # The console gets X's layout too: the LUKS and login prompts, and every
-  # Ctrl+Alt+F2 rescue, are otherwise US while the session is JP.
+  # Use JP for LUKS/login prompts and rescue ttys too.
   console.useXkbConfig = true;
 
-  # lspci on this board: iGPU on bus 0, dGPU on bus 1.
-  video.prime = {
-    intelBusId = "PCI:0:2:0";
-    nvidiaBusId = "PCI:1:0:0";
-  };
+  hardware.nvidia = {
+    # Turing or newer; current open modules support this GPU.
+    open = true;
 
-  # Turing and newer, so the open modules at the kernel's default generation.
-  hardware.nvidia.open = true;
+    # lspci: iGPU on bus 0, dGPU on bus 1.
+    prime = {
+      intelBusId = "PCI:0:2:0";
+      nvidiaBusId = "PCI:1:0:0";
+    };
+  };
 }
